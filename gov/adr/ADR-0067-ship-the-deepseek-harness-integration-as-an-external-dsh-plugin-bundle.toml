@@ -1,0 +1,63 @@
+#:schema ../schema/adr.schema.json
+
+[govctl]
+id = "ADR-0067"
+title = "Ship the DeepSeek Harness integration as an external DSH plugin bundle"
+status = "proposed"
+date = "2026-10-31"
+refs = [
+    "RFC-0002:C-AGENT-INTEGRATION",
+    "RFC-0002:C-COMPATIBILITY-BOUNDARY",
+    "RFC-0002:C-GLOBAL-COMMANDS",
+    "ADR-0033",
+    "ADR-0061",
+]
+tags = [
+    "plugin",
+    "skills-agents",
+]
+
+[content]
+context = "govctl ships a Claude Code plugin and a Codex projection through `govctl agent install/update`. DeepSeek Harness (DSH) is a Cordis-based agent harness with no govctl integration path today. DSH extends through npm bundles: a package declares `dsh.bundle.patch`, and a patch file inserts plugin rows into a per-profile composition. Research against a scratch web profile of DSH 0.2.1-rc.5 established that root-level plugin rows are inherited by every agent preset, that DSH skills are `SKILL.md` bundles requiring only `name` and `description` frontmatter, and that the 0.2 line removed the Claude Code hook bridge, so session-start context and edit guidance must be reimplemented on native interception points. Adding a `dsh` selector to `govctl agent` would change normative behavior defined by [[RFC-0002:C-AGENT-INTEGRATION]], and the native install path depends on the third-party agent-plugin-installer crate, whose runtime set is closed over Codex and Claude. The question is how to add DSH support without making the CLI conflict with its own specification or fragmenting the `.claude/` asset single source of truth that the native bundled plugin materializes from ([[ADR-0061]])."
+decision = "Ship the DSH integration as an external bundle in this repository: the npm package `govctl-dsh` under `dsh-plugin/`. The bundle registers a single root-composition plugin entry so every agent preset inherits the tools, prompt section, skills, and commands without patching shipped presets. The plugin wraps the installed `govctl` binary for model tools (read-only inspection plus approval-gated mutations), contributes a governance policy prompt section and session-start context only inside governed repositories, attaches advisory-only guidance after direct edits of lifecycle-managed artifacts, and registers the bundled skills and human slash commands. This bundle is not a `govctl agent` runtime: [[RFC-0002:C-AGENT-INTEGRATION]]'s bundled-hook requirements continue to govern the native plugin, and DSH's post-execute interception makes the DSH advisory post-edit by design. Governance semantics remain in the Rust binary; the package adds no CLI grammar ([[RFC-0002:C-COMPATIBILITY-BOUNDARY]]) and no new global command ([[RFC-0002:C-GLOBAL-COMMANDS]]), so `init-skills` semantics stand unchanged. The repository's `.claude/` directory remains the only hand-edited asset tree; the package holds generated, normalized copies and carries the source govctl version, and a deterministic CI drift check must fail when the package assets diverge, which is narrower than the blanket second-directory copy rejected during the bundled-plugin decision. The package declares an `engines.dsh` range bounded to the 0.2 line, with 0.2.1-rc.5 as the only tested release, and records 0.22.x as the tested govctl line (warn-only outside it); it does not bundle the binary. Mutating and executing tools request DSH approval on every call and never bypass DSH's denial path; on the tested DSH line the absence of an approval channel denies the call."
+consequences = "Positive: DSH users gain govctl governance tooling through DSH's own install path without an RFC amendment, a govctl release, or a change to the native agent integration; the integration tracks DSH's release cadence independently; asset drift is mechanically checked instead of relying on hand-maintained copies; and governance behavior, locking, signatures, and lifecycle gates stay in one implementation. Negative: `govctl agent` remains the single facade for Claude and Codex only, so release documentation must present two channels and must not imply DSH is a `govctl agent` runtime; desktop-profile installation is app-owned and requires quitting the application, and only a scratch web profile plus one headless live-model session were exercised, so the desktop install and the GUI sourced-message and advisory path remain unverified; the tested DSH release has no Markdown-defined agents, so the four reviewer agents become skills with lower isolation fidelity unless a subagent is used; session-start context is sent as a sourced message when the optional `@deepseek-ai/dsh-llm` peer is present and otherwise as runtime prompt context, while the post-edit advisory has no fallback and is not delivered without that peer; registering at the root layer makes tools visible in every preset, including `minimal`, and a `complete:true` persona hides the policy prose while leaving tools visible, so the plugin cannot scope governance tooling per preset; and the repository now hosts a Node package next to the Rust crate, adding a JavaScript test and CI surface. Neutral: the plugin is versioned independently of govctl and resolves and invokes the installed binary rather than vendoring it; the native runtime alternative remains available later through an [[RFC-0002]] amendment if first-class support is required; publishing as the official `govctl-dsh` package from this repository is assumed, with npm scope, ownership, and canonical repository location left as a release-time decision."
+
+[[content.alternatives]]
+text = "Ship an external DSH bundle in this repository that wraps the installed govctl binary."
+status = "accepted"
+pros = [
+    "Requires no govctl CLI or RFC change and ships through DSH's own bundle install path.",
+    "Reuses the JSON contracts for list, get, show, search, describe, and trace while keeping governance semantics in Rust; status, check, and verify are text plus exit code, so no structured error envelope is available for them.",
+]
+cons = ["Creates a second officially documented delivery channel and an optional peer dependency for sourced messages."]
+
+[[content.alternatives]]
+text = "Add a native DeepSeek Harness runtime to govctl agent."
+status = "rejected"
+pros = ["Preserves one govctl agent facade with version-aligned bundled assets and native doctor/install/update."]
+cons = [
+    "Requires an [[RFC-0002]] amendment, a minor release, and a change to the third-party agent-plugin-installer runtime set.",
+    "Couples govctl releases to the still-moving DSH release candidate.",
+]
+rejection_reason = "Rejected for this decision; revisit if DSH's bundle API stabilizes and first-class support is required."
+
+[[content.alternatives]]
+text = "Document a skills-only projection with govctl init-skills --dir .dsh."
+status = "rejected"
+pros = ["Zero implementation cost and the projected skills land in a directory DSH scans by default."]
+cons = ["Provides no model tools, no session context, and no edit guidance, and still relies on manual content normalization."]
+rejection_reason = "Skills alone do not deliver the governed workflow; the technique is kept only as an interim documentation tip."
+
+[[content.alternatives]]
+text = "Publish the DSH package from a separate repository."
+status = "rejected"
+pros = ["Allows an independent release cadence and ownership boundary."]
+cons = ["Recreates the asset-drift risk between .claude/ and bundled copies and adds a second release surface."]
+rejection_reason = "The asset-drift concern behind [[ADR-0061]]'s bundled-asset design, and behind the earlier rejection of a separate distribution repository, still applies."
+
+[[content.alternatives]]
+text = "Bundle a govctl binary inside the npm package."
+status = "rejected"
+pros = ["Removes the PATH dependency and pins the binary version."]
+cons = ["Adds per-platform release assets of roughly eight to eleven megabytes, re-uploads them on every govctl release, and widens the supply-chain and platform matrix."]
+rejection_reason = "Size, release coupling, and duplicated distribution outweigh the convenience; the plugin resolves the installed binary and returns an actionable error when it is absent."

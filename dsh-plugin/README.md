@@ -16,7 +16,7 @@ signatures, locking, or claims in JavaScript.
 | DSH bundle | `dsh.bundle.patch` → `cordis.patch.yml` (root rows, inherited by every agent preset) |
 | Runtime dependencies | none required; one **optional** peer (`@deepseek-ai/dsh-llm`) upgrades context delivery |
 | Verified on | DSH `0.2.1-rc.5` (scratch web-profile install + boot); govctl `0.22.x` — see [Verification status](#verification-status) |
-| Status | experimental; DSH is a release candidate and its APIs may still change |
+| Status | experimental; DSH is a release candidate and its APIs may still change. This release is published from the `lauthu/govctl` fork; upstream ownership and npm scope are a separate decision. |
 
 ## What the plugin registers
 
