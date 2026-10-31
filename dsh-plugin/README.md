@@ -270,17 +270,25 @@ copies.
 What has actually been exercised against the installed harness:
 
 - DSH `0.2.1-rc.5`.
-- Package installed into a **scratch `DSH_HOME` web profile** (real profiles
-  untouched).
+- Package installed into **scratch `DSH_HOME` profiles** (real profiles
+  untouched) from both a `link:` checkout and the published npm registry
+  artifact (`dsh plugin --profile headless add govctl-dsh@0.1.0`).
 - `dsh --profile <name> --dump-config` shows the `# == govctl-dsh` bundle layer.
-- Boot logs `[govctl-dsh] loaded (binary: govctl)` and
+- Web boot logs `[govctl-dsh] loaded (binary: govctl)` and
   `registered 17 bundled skills`.
+- One **real headless live-model session** against govctl `0.22.0`: the model
+  called `govctl_status` and `govctl_check` (both real invocations) and quoted
+  the injected session-start governance state in its answer.
+- A published-artifact install into a **copy** of the desktop profile updated
+  the profile manifest as expected (dependencies + `dsh.profile.bundles`).
 
-Not verified in that environment: a real **desktop-profile** install, live
-model tool calls, and the sourced-message/advisory path that depends on the
-optional `@deepseek-ai/dsh-llm` peer. Asset integrity and CLI stubs are covered
-by `npm run check-assets`, `npm test`, and `scripts/validate-with-dsh.sh`; use
-those before claiming more than the list above.
+Not verified: installing into the **live desktop profile** (the app must be
+fully quit; the desktop profile cannot be booted from the CLI), and the
+GUI-only sourced-message/advisory rendering path. The post-edit advisory needs
+the optional `@deepseek-ai/dsh-llm` peer and has no fallback. Asset integrity
+and CLI stubs are covered by `npm run check-assets`, `npm test`, and
+`scripts/validate-with-dsh.sh`; use those before claiming more than the list
+above.
 
 ## Compatibility
 
