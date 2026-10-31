@@ -3,7 +3,7 @@
 [govctl]
 id = "ADR-0067"
 title = "Ship the DeepSeek Harness integration as an external DSH plugin bundle"
-status = "proposed"
+status = "accepted"
 date = "2026-10-31"
 refs = [
     "RFC-0002:C-AGENT-INTEGRATION",

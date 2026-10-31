@@ -1,11 +1,13 @@
 # ADR proposal — ship the DeepSeek Harness integration as an external DSH plugin bundle
 
-Status: **ingested as governed artifact `ADR-0067` (proposed)** on 2026-10-31.
+Status: **accepted as governed artifact `ADR-0067`** on 2026-10-31 (proposed and
+reviewed in two independent passes, then accepted by the maintainer).
 The authoritative record now lives in
 `gov/adr/ADR-0067-ship-the-deepseek-harness-integration-as-an-external-dsh-plugin-bundle.toml`
 and is read with `govctl adr show ADR-0067`. This markdown file remains the
-working draft/design note; it is **not** authority once the two diverge. Acceptance
-is a separate lifecycle decision that requires explicit maintainer approval.
+working draft/design note; it is **not** authority once the two diverge. (There
+is no `gov/adr/ADR-0033` live authority here: ADR-0033 is superseded; acceptance
+was tracked through the governed artifact, not through this note.)
 
 Date: 2026-10-31
 Scope owner: govctl maintainers
