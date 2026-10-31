@@ -1,0 +1,22 @@
+{
+  "name": "govctl-dsh-plugin",
+  "version": "0.1.0",
+  "description": "Proof-of-concept DeepSeek Harness bundle that exposes govctl governance to DSH agents",
+  "type": "module",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "cordis.patch.yml",
+    "skills"
+  ],
+  "engines": {
+    "node": ">=20",
+    "dsh": ">=0.2.1-rc.5 <0.3.0-0"
+  },
+  "dsh": {
+    "manifestVersion": 1,
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

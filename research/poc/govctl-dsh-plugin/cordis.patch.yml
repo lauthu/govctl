@@ -1,0 +1,14 @@
+# govctl bundle layer.
+#
+# A bundle's patch is an ordinary Cordis entry list. Rows inserted here land in
+# the root (global) layer, which every agent scope inherits, so the plugin's
+# tools, prompt section, skills and slash commands are visible to standard
+# preset sessions without patching or duplicating the shipped presets.
+- insert:
+    - id: govctl
+      name: govctl-dsh-plugin
+      config:
+        binaryPath: govctl
+        enablePolicySection: true
+        enableSessionState: true
+        enableGuardAdvisory: true
