@@ -117,7 +117,7 @@ test('peer-present: agent/pre-step splices a sourced user message after the clai
     assert.equal(step1.messages[0], claimed)
     const injected = step1.messages[1]
     assert.equal(injected.role, 'user')
-    assert.deepEqual(injected.source, { kind: 'plugin', plugin: 'govctl-dsh' })
+    assert.deepEqual(injected.source, { kind: 'govctl-dsh', form: 'instructions' })
     assert.match(injected.content[0].text, /govctl governance state \(session start\)/)
     assert.match(injected.content[0].text, /Active work: WI-9/)
 
@@ -210,7 +210,7 @@ test('peer-present: tools/post-execute attaches the edit advisory as sourced con
     assert.equal(result.additionalContexts.length, 1)
     const advisory = result.additionalContexts[0]
     assert.equal(advisory.role, 'user')
-    assert.deepEqual(advisory.source, { kind: 'plugin', plugin: 'govctl-dsh' })
+    assert.deepEqual(advisory.source, { kind: 'govctl-dsh', form: 'notice' })
     assert.match(advisory.content[0].text, /lifecycle-managed govctl artifact/)
     // The advisory must name the project-relative gov/ path exactly once.
     assert.match(advisory.content[0].text, /Target: gov\/work\/WI-1\.toml$/)

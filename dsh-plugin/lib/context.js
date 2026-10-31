@@ -17,7 +17,11 @@
  */
 import { findGovernedRoot, isGovernedProject, managedEditTarget } from './paths.js'
 
-const PLUGIN_SOURCE = { kind: 'plugin', plugin: 'govctl-dsh' }
+// Session format v4 retires the lifted `kind: "plugin"` wrapper: durable
+// messages must carry a producer-owned kind. Use the plugin's own producer kind,
+// like `agent-instructions` / `plan-mode` do.
+const INSTRUCTIONS_SOURCE = { kind: 'govctl-dsh', form: 'instructions' }
+const NOTICE_SOURCE = { kind: 'govctl-dsh', form: 'notice' }
 const REFRESH_WAIT_MS = 1_500
 
 export const EDIT_ADVISORY =
@@ -99,7 +103,7 @@ export function registerGovernanceContext(ctx, runner, config, log) {
         if (lastClaimed < 0) return decision
         const message = createUserMessage({
           content: [{ type: 'text', text: promptContextText(state) }],
-          source: PLUGIN_SOURCE,
+          source: INSTRUCTIONS_SOURCE,
         })
         injectedSessions.add(session)
         return {
@@ -151,7 +155,7 @@ export function registerGovernanceContext(ctx, runner, config, log) {
         sent.add(target)
         const message = createUserMessage({
           content: [{ type: 'text', text: `${EDIT_ADVISORY}\n\nTarget: ${target}` }],
-          source: PLUGIN_SOURCE,
+          source: NOTICE_SOURCE,
         })
         return {
           ...decision,

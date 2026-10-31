@@ -19,3 +19,4 @@ Thumbs.db
 
 # DSH plugin package (npm)
 dsh-plugin/node_modules/
+dsh-plugin/*.tgz
