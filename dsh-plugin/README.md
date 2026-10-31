@@ -281,14 +281,21 @@ What has actually been exercised against the installed harness:
   the injected session-start governance state in its answer.
 - A published-artifact install into a **copy** of the desktop profile updated
   the profile manifest as expected (dependencies + `dsh.profile.bundles`).
+- **Live desktop profile**, installed from the npm registry and activated by
+  quitting and relaunching the app: the policy section, the 17-skill catalog
+  and the `govctl_*` tool schemas load; real tool calls (`govctl_status`,
+  `govctl_check`, `govctl_search`) ran against govctl `0.22.0`; and a fresh GUI
+  session received the sourced session-start context
+  (`{"kind":"govctl-dsh","form":"instructions"}` in its session log).
 
-Not verified: installing into the **live desktop profile** (the app must be
-fully quit; the desktop profile cannot be booted from the CLI), and the
-GUI-only sourced-message/advisory rendering path. The post-edit advisory needs
-the optional `@deepseek-ai/dsh-llm` peer and has no fallback. Asset integrity
-and CLI stubs are covered by `npm run check-assets`, `npm test`, and
-`scripts/validate-with-dsh.sh`; use those before claiming more than the list
-above.
+Not verified: the GUI **post-edit advisory rendering** path (the advisory is
+attached through `tools/post-execute` but needs the optional
+`@deepseek-ai/dsh-llm` peer, which resolved to the harness fallback package in
+this deployment), and the approval-request UI for mutating tools (the current
+session runs with approval prompts disabled, so those calls fail closed).
+Asset integrity and CLI stubs are covered by `npm run check-assets`,
+`npm test`, and `scripts/validate-with-dsh.sh`; use those before claiming more
+than the list above.
 
 ## Compatibility
 
