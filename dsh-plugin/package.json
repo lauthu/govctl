@@ -1,0 +1,63 @@
+{
+  "name": "govctl-dsh",
+  "version": "0.1.0",
+  "description": "DeepSeek Harness bundle that exposes govctl governance — RFCs, ADRs, work items, guards and lifecycle rules — to DSH agents",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "govctl",
+    "governance",
+    "rfc",
+    "adr",
+    "work-items"
+  ],
+  "license": "MIT",
+  "author": "lauthu",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lauthu/govctl.git",
+    "directory": "dsh-plugin"
+  },
+  "homepage": "https://github.com/lauthu/govctl/tree/main/dsh-plugin",
+  "bugs": {
+    "url": "https://github.com/lauthu/govctl/issues"
+  },
+  "type": "module",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/",
+    "assets/",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20",
+    "dsh": ">=0.2.1-rc.5 <0.3.0-0"
+  },
+  "dsh": {
+    "manifestVersion": 1,
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-llm": ">=0.2.1-rc.5 <0.3.0-0"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-llm": {
+      "optional": true
+    }
+  },
+  "scripts": {
+    "test": "node --test",
+    "sync-assets": "node scripts/sync-assets.mjs",
+    "check-assets": "node scripts/check-assets.mjs",
+    "pack:check": "npm pack --dry-run"
+  }
+}

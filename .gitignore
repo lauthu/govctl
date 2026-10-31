@@ -16,3 +16,6 @@ Thumbs.db
 .govctl.lock
 .govctl/
 .omc
+
+# DSH plugin package (npm)
+dsh-plugin/node_modules/

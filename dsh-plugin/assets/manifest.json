@@ -1,0 +1,91 @@
+{
+  "govctlVersion": "0.22.0",
+  "source": ".claude",
+  "skills": [
+    {
+      "name": "adr-reviewer",
+      "source": ".claude/agents/adr-reviewer.md",
+      "sha256": "affa1f3627036af9a2c16a20192d8304092dafbb91c4234b6afccb1e1ad98023"
+    },
+    {
+      "name": "adr-writer",
+      "source": ".claude/skills/adr-writer/SKILL.md",
+      "sha256": "92b6480a3c699c0b4f791b44f8a7cbd1dbb801f59aac1fc1f77d0196e7b1edf4"
+    },
+    {
+      "name": "commit",
+      "source": ".claude/skills/commit/SKILL.md",
+      "sha256": "4b836fd74761f6815a518f326c0efa5e9c545bdb01826d9b483945373492692e"
+    },
+    {
+      "name": "compliance-checker",
+      "source": ".claude/agents/compliance-checker.md",
+      "sha256": "97173f926b3c52af5f8a940acf33c3875cf0a2043159826d94e9fe89625e212f"
+    },
+    {
+      "name": "decision-analysis",
+      "source": ".claude/skills/decision-analysis/SKILL.md",
+      "sha256": "ed526045ddedd9f845ca218d676d44541f20c95fff6fec9c4689c4ea7a3652de"
+    },
+    {
+      "name": "detach",
+      "source": ".claude/skills/detach/SKILL.md",
+      "sha256": "de8482d327a0fdc988a7bb0a1a885b35b85c46bddd0d5e585631621076bbc514"
+    },
+    {
+      "name": "discuss",
+      "source": ".claude/skills/discuss/SKILL.md",
+      "sha256": "2255aaec0d9cb0d0a1137dbf0f640b4d55b87e1330e21bf28b951143cfb712fe"
+    },
+    {
+      "name": "gov",
+      "source": ".claude/skills/gov/SKILL.md",
+      "sha256": "dc4113a94388e3b0643e574738244d928d9330ce625f4c83568cd3805e2e1133"
+    },
+    {
+      "name": "guard-writer",
+      "source": ".claude/skills/guard-writer/SKILL.md",
+      "sha256": "516e586a02b8f37a501a5af59b03bdcbcac0a3ef476020a7418ac52aebc1962f"
+    },
+    {
+      "name": "init",
+      "source": ".claude/skills/init/SKILL.md",
+      "sha256": "3a2d5bc3df14b3852c880f98dbca47c00ced5c8519cc8308775a8d13b190b61c"
+    },
+    {
+      "name": "migrate",
+      "source": ".claude/skills/migrate/SKILL.md",
+      "sha256": "b998eac4e22d4df968fb3c42e0f0f9b2daef3b0755e91023adde28c7137be086"
+    },
+    {
+      "name": "quick",
+      "source": ".claude/skills/quick/SKILL.md",
+      "sha256": "a4cb2767b4e50be8331712f8bcf5276ce4b7fc378e0ec94efa65da7b02e7ea10"
+    },
+    {
+      "name": "rfc-reviewer",
+      "source": ".claude/agents/rfc-reviewer.md",
+      "sha256": "63fc1800b961cb23a142d15ca9162864833513b1c9a3106edb588e1342ddc2c2"
+    },
+    {
+      "name": "rfc-writer",
+      "source": ".claude/skills/rfc-writer/SKILL.md",
+      "sha256": "1fc820f267629f4797c7ba74b56fe790fe2a919e9c02e643509d9e5b5ce940bd"
+    },
+    {
+      "name": "spec",
+      "source": ".claude/skills/spec/SKILL.md",
+      "sha256": "4b88c468d40fc50610d324416a36de7f70ee27400191aa1a3636f16ea5894da9"
+    },
+    {
+      "name": "wi-reviewer",
+      "source": ".claude/agents/wi-reviewer.md",
+      "sha256": "9ec20fedaff8652e06a3a617cf7cf6304a3339ba9dceccf7b3b67a3a572d7be8"
+    },
+    {
+      "name": "wi-writer",
+      "source": ".claude/skills/wi-writer/SKILL.md",
+      "sha256": "ab6bf2939e32d42a8547a12760cfbd5be4a3ce5749bf386db1c2416a76e02899"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+name: dsh-plugin CI
+
+# Guards the DeepSeek Harness bundle under dsh-plugin/: asset drift against the
+# .claude/ source of truth, the zero-dependency unit tests, and the published
+# package file list. The end-to-end DSH boot check (scripts/validate-with-dsh.sh)
+# needs an installed DSH app and runs locally, not here.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'dsh-plugin/**'
+      - '.github/workflows/dsh-plugin-ci.yml'
+  pull_request:
+    paths:
+      - 'dsh-plugin/**'
+      - '.github/workflows/dsh-plugin-ci.yml'
+
+jobs:
+  test:
+    name: dsh-plugin (node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22, 24]
+    defaults:
+      run:
+        working-directory: dsh-plugin
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Bundled assets match .claude/ source
+        run: node scripts/check-assets.mjs
+      - name: Unit tests
+        run: node --test
+      - name: Package contents
+        run: npm pack --dry-run --json > /dev/null
