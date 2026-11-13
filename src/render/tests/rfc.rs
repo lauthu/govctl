@@ -113,6 +113,7 @@ fn rfc(status: RfcStatus, clause_status: ClauseStatus) -> RfcIndex {
             phase: RfcPhase::Stable,
             owners: vec!["@owner".to_string()],
             created: "2026-07-21".to_string(),
+            created_by: None,
             updated: None,
             supersedes: None,
             refs: vec!["RFC-0002".to_string()],

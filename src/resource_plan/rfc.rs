@@ -14,11 +14,18 @@ impl ToPlan for RfcCommand {
             RfcCommand::List(args) => Ok(compile_common_list(ListTarget::Rfc, args)),
             RfcCommand::Get(args) => compile_common_get(args),
             RfcCommand::Show(args) => Ok(compile_common_show(cmd::edit::ArtifactType::Rfc, args)),
-            RfcCommand::New { title, id } => Ok(plan_create(
+            RfcCommand::New {
+                title,
+                id,
+                actor_file,
+                repo_id,
+            } => Ok(plan_create(
                 ListTarget::Rfc,
                 CreateOp::Rfc {
                     title: title.clone(),
                     id: id.clone(),
+                    actor_file: actor_file.clone(),
+                    repo_id: repo_id.clone(),
                 },
             )),
             RfcCommand::Edit(args) => compile_common_edit(args),

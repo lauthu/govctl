@@ -1,0 +1,11 @@
+#:schema ../../../schema/clause.schema.json
+
+[govctl]
+id = "C-ACTOR"
+title = "Stable actor identity and attribution"
+kind = "normative"
+status = "active"
+since = "0.1.0"
+
+[content]
+text = "An actor MUST have a nonempty stable subjectId and display name; optional kind distinguishes human and agent. Existing participantId, agentId, role and roles fields MAY be retained for client interoperability. Names, model identifiers and RFC owners MUST NOT define identity. RFC/ADR/WI MAY carry optional created_by metadata containing this actor, supplied explicitly by actor context on creation. Existing artifacts lacking it remain unknown. Authorship and contributions MUST be bound to specific content revisions; assignment, review and lifecycle-only actions MUST NOT by themselves assert content authorship. Creator declaration and verified authorship MUST remain distinguishable."

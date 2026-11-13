@@ -1,0 +1,308 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Attached governance collaboration event",
+  "description": "RFC-0011 native v2 and byte-preserved Lattice v1 records. Integrity, references and explicit signer trust are validated by govctl.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "formatVersion",
+    "eventId",
+    "type",
+    "createdAt",
+    "actor",
+    "target",
+    "requestDigest",
+    "payload",
+    "signature"
+  ],
+  "properties": {
+    "formatVersion": {
+      "enum": [1, 2]
+    },
+    "eventId": {
+      "type": "string",
+      "pattern": "^ev_[a-f0-9]{64}$"
+    },
+    "type": {
+      "enum": [
+        "comment",
+        "review",
+        "authorship",
+        "resolution",
+        "execution",
+        "legacy-import",
+        "review-assignment",
+        "review-run"
+      ]
+    },
+    "createdAt": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "actor": {
+      "$ref": "#/$defs/actor"
+    },
+    "target": {
+      "$ref": "#/$defs/target"
+    },
+    "requestDigest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "payload": {
+      "type": "object"
+    },
+    "signature": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/signature"
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subjectId", "name"],
+      "properties": {
+        "subjectId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "agentId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "participantId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "kind": {
+          "enum": ["human", "agent"]
+        },
+        "roles": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          }
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repoId",
+        "kind",
+        "id",
+        "version",
+        "contentDigest",
+        "commit"
+      ],
+      "properties": {
+        "repoId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "kind": {
+          "enum": ["rfc", "adr", "work"]
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,160}$"
+        },
+        "version": {
+          "type": ["string", "null"],
+          "maxLength": 100
+        },
+        "contentDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "commit": {
+          "type": ["string", "null"],
+          "pattern": "^([a-f0-9]{40}|[a-f0-9]{64})$"
+        }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "keyId", "publicKey", "value"],
+      "properties": {
+        "algorithm": {
+          "const": "Ed25519"
+        },
+        "keyId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "publicKey": {
+          "type": "string",
+          "maxLength": 16384
+        },
+        "value": {
+          "type": "string",
+          "maxLength": 256
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "formatVersion": {
+            "const": 1
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "signature": {
+            "$ref": "#/$defs/signature"
+          },
+          "type": {
+            "not": {
+              "const": "comment"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "comment"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "required": ["body"],
+            "properties": {
+              "body": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 65536
+              },
+              "replyTo": {
+                "type": ["string", "null"],
+                "pattern": "^ev_[a-f0-9]{64}$"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "review"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "required": ["scope", "verdict", "reason"],
+            "properties": {
+              "scope": {
+                "enum": ["artifact", "code"]
+              },
+              "verdict": {
+                "enum": ["approved", "changes_requested", "comment"]
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 65536
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "authorship"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "required": ["authors"],
+            "properties": {
+              "authors": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 1000,
+                "items": {
+                  "$ref": "#/$defs/actor"
+                }
+              },
+              "automatic": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "resolution"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "required": ["reviewId", "reason"],
+            "properties": {
+              "reviewId": {
+                "type": "string",
+                "pattern": "^ev_[a-f0-9]{64}$"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 65536
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

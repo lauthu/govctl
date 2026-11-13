@@ -2,6 +2,24 @@
   "version": 3,
   "simple_rules": [
     {
+      "artifact": "work",
+      "name": "created_by",
+      "kind": "scalar",
+      "verbs": ["get"]
+    },
+    {
+      "artifact": "adr",
+      "name": "created_by",
+      "kind": "scalar",
+      "verbs": ["get"]
+    },
+    {
+      "artifact": "rfc",
+      "name": "created_by",
+      "kind": "scalar",
+      "verbs": ["get"]
+    },
+    {
       "artifact": "clause",
       "name": "text",
       "kind": "scalar",
@@ -302,6 +320,27 @@
     }
   ],
   "runtime_fields": [
+    {
+      "artifact": "work",
+      "name": "created_by",
+      "get": { "path": ["govctl", "created_by"], "render": "scalar" },
+      "set": null,
+      "list_path": null
+    },
+    {
+      "artifact": "adr",
+      "name": "created_by",
+      "get": { "path": ["govctl", "created_by"], "render": "scalar" },
+      "set": null,
+      "list_path": null
+    },
+    {
+      "artifact": "rfc",
+      "name": "created_by",
+      "get": { "path": ["created_by"], "render": "scalar" },
+      "set": null,
+      "list_path": null
+    },
     {
       "artifact": "rfc",
       "name": "status",

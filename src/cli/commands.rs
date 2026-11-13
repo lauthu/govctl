@@ -81,6 +81,12 @@ pub(crate) struct ReleaseArgs {
 
 #[derive(Subcommand)]
 pub(crate) enum Commands {
+    /// Manage authors, comments and review records attached to governance entities
+    Collab {
+        #[command(subcommand)]
+        command: super::CollabCommand,
+    },
+
     /// Initialize govctl in the current directory
     #[command(after_help = help::INIT)]
     Init {

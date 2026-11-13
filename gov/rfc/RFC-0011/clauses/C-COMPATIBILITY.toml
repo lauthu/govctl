@@ -1,0 +1,11 @@
+#:schema ../../../schema/clause.schema.json
+
+[govctl]
+id = "C-COMPATIBILITY"
+title = "Legacy Lattice compatibility"
+kind = "normative"
+status = "active"
+since = "0.1.0"
+
+[content]
+text = "Native readers MUST accept existing Lattice formatVersion 1 envelopes including review, authorship, resolution, execution, legacy-import, review-assignment and review-run. They MUST preserve original files, IDs, actors, timestamps, targets and signatures without rewriting or implicit re-signing. New native declarations MAY use formatVersion 2 with a null signature. Imports and replay MUST preserve existing bytes. Existing schema-5 RFC/ADR/WI without created_by MUST remain valid; no attribution may be inferred from Git configuration or responsibility metadata."

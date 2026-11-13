@@ -1,0 +1,27 @@
+#:schema ../schema/adr.schema.json
+
+[govctl]
+id = "ADR-0068"
+title = "Use append-only revision-bound collaboration envelopes with explicit signer trust"
+status = "accepted"
+date = "2026-11-13"
+refs = ["RFC-0011"]
+
+[content]
+context = "Repository governance must carry its author and review history across clients. Lattice already has signed attached events that must survive native adoption."
+decision = "Keep creator metadata on artifacts and store version-bound authorship, comments and review events beside them. Preserve existing Lattice envelopes byte-for-byte and require explicit public-key trust for effective signed approvals."
+consequences = "Append-only files reduce concurrent merge conflicts and keep review writes outside content digests. CLI author declarations provide attribution without proving authentication. Clients retain credentials and may enforce live membership policy."
+
+[[content.alternatives]]
+text = "Adopt the existing attached event layout with an additive native declaration format"
+status = "accepted"
+
+[[content.alternatives]]
+text = "Embed mutable review arrays into every artifact TOML"
+status = "rejected"
+rejection_reason = "The alternative weakens portable revision-bound history or creates a competing source of truth."
+
+[[content.alternatives]]
+text = "Store reviews only in a client service database"
+status = "rejected"
+rejection_reason = "The alternative weakens portable revision-bound history or creates a competing source of truth."

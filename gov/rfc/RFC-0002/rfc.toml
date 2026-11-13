@@ -3,12 +3,12 @@
 [govctl]
 id = "RFC-0002"
 title = "CLI Resource Model and Command Architecture"
-version = "3.8.0"
+version = "3.9.0"
 status = "normative"
-phase = "impl"
+phase = "test"
 owners = ["@govctl-org"]
 created = "2026-01-19"
-updated = "2026-10-18"
+updated = "2026-11-13"
 tags = [
     "cli",
     "editing",
@@ -16,7 +16,7 @@ tags = [
     "validation",
     "release",
 ]
-signature = "fb1f84ece30f4f013d24e210ee9113ee8664d567ae385f0585a47ef22da0b628"
+signature = "4900b58c388fc6f1191775db297257ba4c85c5da4467e0e1761565b9827c8ee6"
 
 [[sections]]
 title = "Summary"
@@ -47,6 +47,12 @@ clauses = [
     "clauses/C-DESCRIBE-COMMAND.toml",
     "clauses/C-AGENT-INTEGRATION.toml",
 ]
+
+[[changelog]]
+version = "3.9.0"
+date = "2026-11-13"
+notes = "Add native collaboration command protocol"
+added = ["Define the collab namespace and explicit actor context"]
 
 [[changelog]]
 version = "3.8.0"

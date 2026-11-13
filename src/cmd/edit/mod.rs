@@ -30,6 +30,7 @@ mod value_codec;
 use self::add::{AddFieldRequest, add_to_field};
 pub use self::artifact::ArtifactType;
 pub use self::get::get_field;
+pub(crate) use self::get::read_field_value;
 pub use self::remove::remove_from_field;
 pub use self::request::{EditFieldRequest, OwnedEditAction};
 use self::set::apply_set_field;

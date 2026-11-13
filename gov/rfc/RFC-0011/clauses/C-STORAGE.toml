@@ -1,0 +1,11 @@
+#:schema ../../../schema/clause.schema.json
+
+[govctl]
+id = "C-STORAGE"
+title = "Append-only portable storage"
+kind = "normative"
+status = "active"
+since = "0.1.0"
+
+[content]
+text = "Attached events MUST be stored under gov/collaboration/<kind>/<artifactId>/<eventId>.json for kind rfc, adr or work. Files MUST be published atomically without overwriting another event. Reads and writes MUST reject traversal, symbolic-link escapes, malformed or oversized content and mismatched file/target identities. A repeated idempotent event with identical request identity MUST replay; reuse for different content MUST fail. No repository credential or private signing key may be introduced by these commands."

@@ -6,6 +6,8 @@ fn test_from_clause_command_uses_canonical_edit_when_path_is_present()
     let cmd = ClauseCommand::Edit(CommonEditArgs {
         id: "RFC-0001:C-TEST".to_string(),
         path: "text".to_string(),
+        actor_file: None,
+        repo_id: None,
         action: EditActionArgs {
             set: Some(Some("Updated".to_string())),
             add: None,

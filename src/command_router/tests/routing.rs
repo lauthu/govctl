@@ -74,6 +74,8 @@ fn test_target_resolves_get_and_edit_to_same_field_target() -> Result<(), Box<dy
     let edit = crate::AdrCommand::Edit(crate::CommonEditArgs {
         id: "ADR-0038".to_string(),
         path: "alternatives[1].status".to_string(),
+        actor_file: None,
+        repo_id: None,
         action: EditActionArgs {
             set: None,
             add: None,

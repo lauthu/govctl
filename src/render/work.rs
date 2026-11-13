@@ -68,6 +68,14 @@ pub fn render_work_item_with_projection(
         status_line.push_str(&format!(" | **Completed:** {done}"));
     }
     let _ = writeln!(out, "{status_line}");
+    if let Some(actor) = &meta.created_by {
+        let _ = writeln!(
+            out,
+            "> **Created by (declared):** {} (`{}`)",
+            actor.name, actor.subject_id
+        );
+    }
+
     let _ = writeln!(out);
 
     // Tags

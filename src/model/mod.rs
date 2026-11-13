@@ -10,6 +10,7 @@
 //!
 //! Lifecycle state machines per [[RFC-0001]].
 
+mod actor;
 mod adr;
 mod changelog;
 mod clause;
@@ -22,6 +23,7 @@ mod rfc;
 mod tests;
 mod work;
 
+pub use actor::{Actor, read_actor_file};
 pub use adr::{AdrContent, AdrMeta, AdrSpec, AdrStatus, Alternative, AlternativeStatus};
 pub use changelog::{ChangelogCategory, ChangelogEntry};
 pub use clause::{ClauseKind, ClauseSpec, ClauseStatus, ClauseWire};

@@ -14,6 +14,8 @@ pub(super) fn create(
     config: &Config,
     title: &str,
     active: bool,
+    actor: Option<&crate::model::Actor>,
+    repo_id: Option<&str>,
     op: WriteOp,
 ) -> DiagnosticResult<Diagnostics> {
     let work_dir = config.work_dir();
@@ -70,6 +72,7 @@ pub(super) fn create(
 
     let mut meta = WorkItemMeta::new(work_id.clone(), title, status);
     meta.created = Some(date.clone());
+    meta.created_by = actor.cloned();
     meta.started = started;
 
     let spec = WorkItemSpec {
@@ -93,6 +96,9 @@ pub(super) fn create(
         op,
     )?;
     reservation.record(&work_id, &work_path);
+    if let Some(actor) = actor {
+        crate::collaboration::append_authorship(config, &work_id, actor, true, repo_id, op)?;
+    }
 
     let mut warnings = reservation.into_warnings();
 

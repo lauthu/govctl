@@ -25,7 +25,7 @@ EXAMPLES:
     /// Get work item metadata or specific field
     #[command(after_help = "\
 VALID FIELDS:
-    - title, description, status, completed_at, refs, depends_on
+    - title, description, status, completed_at, refs, depends_on, created_by
     - notes, acceptance_criteria
     - verification.required_guards, verification.waivers
 
@@ -64,6 +64,12 @@ NOTES:
         /// Immediately activate the work item
         #[arg(long)]
         active: bool,
+        /// JSON actor context declaring the creator (not an authentication credential)
+        #[arg(long)]
+        actor_file: Option<PathBuf>,
+        /// Repository identity used in the contribution target
+        #[arg(long, requires = "actor_file")]
+        repo_id: Option<String>,
     },
     /// Canonical path-first edit entrypoint
     #[command(after_help = "\

@@ -5,6 +5,8 @@ fn test_edit_plans_are_mutating() -> Result<(), Box<dyn std::error::Error>> {
     let plan = crate::RfcCommand::Edit(crate::CommonEditArgs {
         id: "RFC-0001".to_string(),
         path: "title".to_string(),
+        actor_file: None,
+        repo_id: None,
         action: EditActionArgs {
             set: Some(Some("X".to_string())),
             add: None,
@@ -23,6 +25,8 @@ fn test_edit_plans_are_mutating() -> Result<(), Box<dyn std::error::Error>> {
     let plan = ClauseCommand::Edit(CommonEditArgs {
         id: "RFC-0001:C-TEST".to_string(),
         path: "text".to_string(),
+        actor_file: None,
+        repo_id: None,
         action: EditActionArgs {
             set: Some(None),
             add: None,

@@ -7,7 +7,13 @@ use crate::ui;
 use crate::write::{WriteOp, create_dir_all, today};
 use slug::slugify;
 
-pub(super) fn create(config: &Config, title: &str, op: WriteOp) -> DiagnosticResult<Diagnostics> {
+pub(super) fn create(
+    config: &Config,
+    title: &str,
+    actor: Option<&crate::model::Actor>,
+    repo_id: Option<&str>,
+    op: WriteOp,
+) -> DiagnosticResult<Diagnostics> {
     let adr_dir = config.adr_dir();
     let display_adr_dir = config.display_path(&adr_dir);
     create_dir_all(&adr_dir, op, Some(&display_adr_dir))?;
@@ -48,8 +54,10 @@ pub(super) fn create(config: &Config, title: &str, op: WriteOp) -> DiagnosticRes
     let filename = format!("{adr_id}-{slug}.toml");
     let adr_path = adr_dir.join(&filename);
 
+    let mut meta = AdrMeta::new(adr_id.clone(), title, AdrStatus::Proposed, today());
+    meta.created_by = actor.cloned();
     let spec = AdrSpec {
-        govctl: AdrMeta::new(adr_id.clone(), title, AdrStatus::Proposed, today()),
+        govctl: meta,
         content: AdrContent {
             context: "Describe the context and problem statement.\nWhat is the issue that we're seeing that is motivating this decision?".to_string(),
             decision: "Describe the decision that was made.\nWhat is the change that we're proposing and/or doing?".to_string(),
@@ -68,6 +76,9 @@ pub(super) fn create(config: &Config, title: &str, op: WriteOp) -> DiagnosticRes
         op,
     )?;
     reservation.record(&adr_id, &adr_path);
+    if let Some(actor) = actor {
+        crate::collaboration::append_authorship(config, &adr_id, actor, true, repo_id, op)?;
+    }
 
     if !op.is_preview() {
         ui::created("ADR", &config.display_path(&adr_path));

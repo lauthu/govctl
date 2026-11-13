@@ -1,3 +1,4 @@
+use super::Actor;
 use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
 use strum::AsRefStr;
@@ -9,6 +10,9 @@ pub struct AdrMeta {
     pub title: String,
     pub status: AdrStatus,
     pub date: String,
+    /// Explicit creator declaration; absent for unknown historical authors.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created_by: Option<Actor>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub superseded_by: Option<String>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -29,6 +33,7 @@ impl AdrMeta {
             title: title.into(),
             status,
             date: date.into(),
+            created_by: None,
             superseded_by: None,
             refs: vec![],
             tags: vec![],

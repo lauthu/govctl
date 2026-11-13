@@ -23,11 +23,18 @@ impl ToPlan for WorkCommand {
                     status: *status,
                 },
             )),
-            WorkCommand::New { title, active } => Ok(plan_create(
+            WorkCommand::New {
+                title,
+                active,
+                actor_file,
+                repo_id,
+            } => Ok(plan_create(
                 ListTarget::Work,
                 CreateOp::Work {
                     title: title.clone(),
                     active: *active,
+                    actor_file: actor_file.clone(),
+                    repo_id: repo_id.clone(),
                 },
             )),
             WorkCommand::Edit(args) => compile_common_edit(args),

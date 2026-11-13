@@ -1,0 +1,11 @@
+#:schema ../../../schema/clause.schema.json
+
+[govctl]
+id = "C-TRUST"
+title = "Declared identity and explicit trust"
+kind = "normative"
+status = "active"
+since = "0.1.0"
+
+[content]
+text = "An unsigned native actor declaration MUST remain visibly declared and MUST NOT count as trusted approval or confirmed authorship. Signed records MUST use an explicitly identified Ed25519 signing key and canonical JSON payload. Verification of cryptographic integrity MUST remain distinct from trust in the signer. A key embedded in a repository event MUST NOT make itself trusted. Clients MAY supply trusted public key files explicitly; private key files MAY be supplied locally for native signing but MUST never enter records or output. Invalid signatures MUST fail append and MUST be reported by validation."

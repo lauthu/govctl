@@ -5,6 +5,15 @@ use crate::diagnostic::DiagnosticResult;
 
 impl ToPlan for ConformanceCommand {
     fn to_plan(&self) -> DiagnosticResult<CommandPlan> {
+        if let ConformanceCommand::Edit(args) = self
+            && args.actor_file.is_some()
+        {
+            return Err(crate::diagnostic::Diagnostic::new(
+                crate::diagnostic::DiagnosticCode::E0822UnsupportedOperation,
+                "Actor context is supported for RFC, ADR, Work Item and Clause content edits",
+                &args.id,
+            ));
+        }
         let op = match self {
             ConformanceCommand::List(args) => BuiltinOp::ConformanceList {
                 filter: args.filter.clone(),

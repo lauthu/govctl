@@ -338,6 +338,7 @@ mod tests {
                     phase: RfcPhase::Impl,
                     owners: vec![],
                     created: "2026-06-07".to_string(),
+                    created_by: None,
                     updated: None,
                     supersedes: None,
                     refs: vec![],

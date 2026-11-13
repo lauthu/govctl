@@ -13,10 +13,16 @@ impl ToPlan for AdrCommand {
             AdrCommand::List(args) => Ok(compile_common_list(ListTarget::Adr, args)),
             AdrCommand::Get(args) => compile_common_get(args),
             AdrCommand::Show(args) => Ok(compile_common_show(cmd::edit::ArtifactType::Adr, args)),
-            AdrCommand::New { title } => Ok(plan_create(
+            AdrCommand::New {
+                title,
+                actor_file,
+                repo_id,
+            } => Ok(plan_create(
                 ListTarget::Adr,
                 CreateOp::Adr {
                     title: title.clone(),
+                    actor_file: actor_file.clone(),
+                    repo_id: repo_id.clone(),
                 },
             )),
             AdrCommand::Edit(args) => compile_common_edit(args),

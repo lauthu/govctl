@@ -100,7 +100,15 @@ pub(crate) fn plan_edit(
     field: &str,
     action: OwnedEditAction,
 ) -> DiagnosticResult<CommandPlan> {
-    target(id, Some(field), Op::Edit(EditOp::Field { action }))
+    target(
+        id,
+        Some(field),
+        Op::Edit(EditOp::Field {
+            action,
+            actor_file: None,
+            repo_id: None,
+        }),
+    )
 }
 
 pub(crate) fn plan_lifecycle(

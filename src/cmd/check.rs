@@ -87,6 +87,7 @@ pub(crate) fn collect_diagnostics(
         ));
     }
     all_diagnostics.extend(installed_schema_diagnostics(config));
+    all_diagnostics.extend(crate::collaboration::check(config));
     all_diagnostics.extend(crate::cmd::project_support::local_state_gitignore_diagnostics(config));
     if let Err(diagnostic) = reference_pattern::compile(
         &config.source_scan.pattern,

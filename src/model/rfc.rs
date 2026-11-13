@@ -1,3 +1,4 @@
+use super::Actor;
 use super::changelog::ChangelogEntry;
 use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
@@ -13,6 +14,9 @@ pub struct RfcSpec {
     pub phase: RfcPhase,
     pub owners: Vec<String>,
     pub created: String,
+    /// Explicit creator declaration, independent of owners and later contributors.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created_by: Option<Actor>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub updated: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -58,6 +62,9 @@ pub struct RfcMeta {
     pub phase: RfcPhase,
     pub owners: Vec<String>,
     pub created: String,
+    /// Explicit creator declaration, independent of owners and later contributors.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created_by: Option<Actor>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub updated: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -81,6 +88,7 @@ impl From<RfcSpec> for RfcWire {
                 phase: s.phase,
                 owners: s.owners,
                 created: s.created,
+                created_by: s.created_by,
                 updated: s.updated,
                 supersedes: s.supersedes,
                 refs: s.refs,
@@ -103,6 +111,7 @@ impl From<RfcWire> for RfcSpec {
             phase: w.govctl.phase,
             owners: w.govctl.owners,
             created: w.govctl.created,
+            created_by: w.govctl.created_by,
             updated: w.govctl.updated,
             supersedes: w.govctl.supersedes,
             refs: w.govctl.refs,

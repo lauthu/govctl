@@ -68,6 +68,7 @@ pub(super) fn rfc(
             phase,
             owners: vec![],
             created: "2026-01-01".to_string(),
+            created_by: None,
             updated: None,
             supersedes: None,
             refs: vec![],

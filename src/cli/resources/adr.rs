@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use clap::Subcommand;
 
 use crate::{
@@ -22,7 +24,7 @@ EXAMPLES:
     /// Get ADR metadata or specific field
     #[command(after_help = "\
 VALID FIELDS:
-    - title, date, status, superseded_by
+    - title, date, status, superseded_by, created_by
     - context, decision, consequences, refs, alternatives
 
 EXAMPLES:
@@ -55,6 +57,12 @@ NOTES:
     New {
         /// ADR title
         title: String,
+        /// JSON actor context declaring the creator (not an authentication credential)
+        #[arg(long)]
+        actor_file: Option<PathBuf>,
+        /// Repository identity used in the contribution target
+        #[arg(long, requires = "actor_file")]
+        repo_id: Option<String>,
     },
     /// Canonical path-first edit entrypoint
     #[command(after_help = "\

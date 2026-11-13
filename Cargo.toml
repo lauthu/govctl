@@ -65,6 +65,9 @@ chrono = { version = "0.4", features = ["serde"] }
 
 # Cryptography (signature verification)
 sha2 = "0.10"
+base64 = "0.22"
+ed25519-dalek = { version = "2.2", features = ["pkcs8", "pem"] }
+ryu-js = "1"
 
 # Random number generation (for work item ID strategy)
 rand = "0.10"

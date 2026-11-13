@@ -62,4 +62,6 @@ A done Work Item that is not referenced by a release MUST be allowed to return t
 A Work Item referenced by a release MUST remain done.
 
 **Rationale:**
-An unreleased completion is a correctable judgment. Release membership supplies the immutable lifecycle boundary without adding another persisted Work Item status. Omitting empty list fields keeps the TOML representation minimal without changing the logical data model."""
+An unreleased completion is a correctable judgment. Release membership supplies the immutable lifecycle boundary without adding another persisted Work Item status. Omitting empty list fields keeps the TOML representation minimal without changing the logical data model.
+
+The optional [govctl] field created_by MAY record an explicitly declared stable actor under [[RFC-0011:C-ACTOR]]. Attached authorship, comments and reviews follow [[RFC-0011]]; omitted creator identity MUST remain unknown."""

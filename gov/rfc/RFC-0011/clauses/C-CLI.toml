@@ -1,0 +1,11 @@
+#:schema ../../../schema/clause.schema.json
+
+[govctl]
+id = "C-CLI"
+title = "Native collaboration protocol"
+kind = "normative"
+status = "active"
+since = "0.1.0"
+
+[content]
+text = "The collab namespace MUST expose capability discovery, target, list and append operations with machine-readable JSON output. Target/list/append MUST accept explicit repository identity. List MUST support a whole-project batch so clients need not spawn one process per artifact. Append MUST accept a bounded envelope through stdin. Native add MUST support comment, review, authorship and resolution with explicit actor/payload input and a stable idempotency key; local optional signing and explicit target input are permitted. Structured creation and edit actor context MUST be available to native clients. govctl check MUST validate stored collaboration structure and signature integrity without treating unknown keys as trusted. Queries MUST be useful independently of Lattice."

@@ -10,6 +10,12 @@ Release entries are curated summaries for readers. Work item traceability remain
 
 ## [Unreleased]
 
+### Added
+
+- Record explicit creators for RFC ADR and Work Item without inferring historical authors (WI-2026-11-13-001)
+- Support native revision-bound authorship comments review replies and resolution through CLI (WI-2026-11-13-001)
+- Validate safe append-only storage exact targets signature integrity and explicit signer trust (WI-2026-11-13-001)
+
 ### Changed
 
 - check, init, and migrate treat local-state paths as satisfied when version control already excludes them (WI-2026-10-18-001)
@@ -18,6 +24,7 @@ Release entries are curated summaries for readers. Work item traceability remain
 
 - a tracked file inside the local-state directory does not hide a missing directory ignore rule (WI-2026-10-18-001)
 - when a child of the local-state directory is tracked and a new file there is already excluded, check stays quiet and migrate does not append another directory entry, including on a second run (WI-2026-10-18-002)
+- Preserve existing Lattice event bytes IDs signatures and current review conclusions (WI-2026-11-13-001)
 
 ## [0.22.0] - 2026-10-09
 

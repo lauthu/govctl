@@ -17,6 +17,24 @@ pub fn get_field(
     field: Option<&str>,
     output: Option<GetOutputFormat>,
 ) -> DiagnosticResult<Vec<Diagnostic>> {
+    let value = read_field_value(config, id, field)?;
+    print_get_output(
+        &value,
+        field.is_some(),
+        output,
+        DiagnosticCode::E0903UnexpectedError,
+        id,
+    )?;
+
+    Ok(vec![])
+}
+
+/// Read a logical value without printing, including the adapters used by `get`.
+pub(crate) fn read_field_value(
+    config: &Config,
+    id: &str,
+    field: Option<&str>,
+) -> DiagnosticResult<serde_json::Value> {
     let plan = edit_engine::plan_request(id, field)?;
     let value = match plan.artifact {
         ArtifactType::Adr => {
@@ -65,13 +83,5 @@ pub fn get_field(
             ArtifactType::Conformance,
         )?,
     };
-    print_get_output(
-        &value,
-        field.is_some(),
-        output,
-        DiagnosticCode::E0903UnexpectedError,
-        id,
-    )?;
-
-    Ok(vec![])
+    Ok(value)
 }

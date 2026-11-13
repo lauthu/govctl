@@ -38,4 +38,6 @@ The current entry's summary and categorized changes MAY be corrected without cha
 Implementations MUST reject legacy RFC JSON storage files (`rfc.json`) during normal operations. The diagnostic MUST instruct users to migrate those repositories with a govctl version earlier than 0.9 before upgrading to a TOML-only govctl release.
 
 **Rationale:**
-The current changelog entry describes the current RFC version and may need refinement while that version is authored. Matching by version avoids relying on array position. Keeping version identity, dates, and historical entries lifecycle-owned preserves version provenance."""
+The current changelog entry describes the current RFC version and may need refinement while that version is authored. Matching by version avoids relying on array position. Keeping version identity, dates, and historical entries lifecycle-owned preserves version provenance.
+
+The optional [govctl] field created_by MAY record an explicitly declared stable actor under [[RFC-0011:C-ACTOR]]. Attached authorship, comments and reviews follow [[RFC-0011]]; omitted creator identity MUST remain unknown."""

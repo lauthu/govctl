@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use clap::Args;
 
 use super::actions::EditActionArgs;
@@ -47,6 +49,12 @@ pub(crate) struct CommonEditArgs {
     pub(crate) id: String,
     /// Canonical field path
     pub(crate) path: String,
+    /// JSON actor context for a revision-bound content contribution
+    #[arg(long)]
+    pub(crate) actor_file: Option<PathBuf>,
+    /// Repository identity used in the contribution target
+    #[arg(long, requires = "actor_file")]
+    pub(crate) repo_id: Option<String>,
     #[command(flatten)]
     pub(crate) action: EditActionArgs,
 }

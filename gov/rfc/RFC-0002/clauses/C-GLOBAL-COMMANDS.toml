@@ -247,4 +247,6 @@ New global commands MAY be added via RFC amendment. They MUST meet at least one 
 1. Operate on multiple resource types
 2. Perform project-level initialization or cleanup
 3. Provide meta-information about the CLI itself
-4. Manage local execution state that coordinates governed resources without becoming a governed resource itself"""
+4. Manage local execution state that coordinates governed resources without becoming a governed resource itself
+
+The collab global namespace MUST expose portable attached-record capabilities, target, list, show, add and append operations according to [[RFC-0011:C-CLI]]. It spans the existing RFC, ADR and Work Item resources without defining a new governed task artifact. Collaboration validation under govctl check MUST validate envelope structure and cryptographic integrity, while effective signer trust remains an explicit query or client policy."""

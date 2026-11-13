@@ -35,7 +35,7 @@ Options:
           Print help (see a summary with '-h')
 
 VALID FIELDS:
-    - title, date, status, superseded_by
+    - title, date, status, superseded_by, created_by
     - context, decision, consequences, refs, alternatives
 
 EXAMPLES:
