@@ -9,17 +9,32 @@ not depend on a particular orchestration product.
 
 ## Attribute a creation or edit
 
-An actor file identifies the person or agent making a change:
+`actor.json` is a caller-supplied input file for attribution, not a registered
+Agent entity or a runtime profile. The smallest accepted object is:
 
 ```json
 {
   "subjectId": "agent:implementer-1",
-  "kind": "agent",
-  "agentId": "implementer-1",
-  "name": "Implementation Agent",
-  "role": "implementer"
+  "name": "Implementation Agent"
 }
 ```
+
+Creation embeds this object's values in the artifact's `created_by` metadata;
+attached authorship, comment and review events carry the values in `actor`.
+The CLI does not store the input file's path or depend on that file afterward;
+callers can use a temporary file and remove it after the command completes.
+
+`name` can be a person's name or a lightweight model/harness label describing
+who produced the content. Keep `subjectId` stable for the same logical
+contributor across machines and runs so authorship comparisons remain meaningful.
+It is an attribution identifier, not a description for reconstructing a runtime.
+A display name or model label alone does not prove identity, reviewer
+independence or trust.
+
+Clients that already have richer context may also supply `kind`, `agentId`,
+`participantId`, `role` and `roles`. Keep `agentId` stable too when supplying it.
+These optional claims support attribution and review policy; using the basic
+CLI does not require a separate Agent registry or credential management system.
 
 Pass it explicitly when creating an artifact or editing authored content:
 
