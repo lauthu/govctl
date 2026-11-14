@@ -1,0 +1,39 @@
+#:schema ../../schema/rfc.schema.json
+
+[govctl]
+id = "RFC-0012"
+title = "Repository-authoritative multi-agent coordination"
+version = "0.1.0"
+status = "draft"
+phase = "spec"
+owners = ["@govctl-org"]
+created = "2026-11-14"
+refs = [
+    "RFC-0000",
+    "RFC-0001",
+    "RFC-0004",
+    "RFC-0006",
+    "RFC-0010",
+    "RFC-0011",
+]
+
+[[sections]]
+title = "Summary"
+
+[[sections]]
+title = "Specification"
+clauses = [
+    "clauses/C-AUTHORITY.toml",
+    "clauses/C-REQUEST.toml",
+    "clauses/C-EXCLUSION.toml",
+    "clauses/C-PUBLICATION.toml",
+    "clauses/C-GENERATION.toml",
+    "clauses/C-RESULT.toml",
+    "clauses/C-POLICY.toml",
+    "clauses/C-COMPATIBILITY.toml",
+]
+
+[[changelog]]
+version = "0.1.0"
+date = "2026-11-14"
+notes = "Initial draft"

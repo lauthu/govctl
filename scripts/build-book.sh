@@ -47,11 +47,13 @@ cat > "$SUMMARY" << 'EOF'
 # User Guide
 
 - [Getting Started](./guide/getting-started.md)
+- [Architecture](./guide/architecture.md)
 - [Recommended Workflows](./guide/recommended-workflows.md)
 - [Parallel Workspaces](./guide/parallel-workspaces.md)
 - [Working with RFCs](./guide/rfcs.md)
 - [Working with ADRs](./guide/adrs.md)
 - [Working with Work Items](./guide/work-items.md)
+- [Authors, Comments, and Reviews](./guide/collaboration.md)
 - [Conformance Cases](./guide/conformance-cases.md)
 - [Validation & Rendering](./guide/validation.md)
 

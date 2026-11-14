@@ -1,0 +1,46 @@
+flowchart TB
+  users["People and external agent clients"]
+
+  subgraph current["IMPLEMENTED: local governance and collaboration"]
+    cli["govctl CLI and JSON contract"]
+    safety["Schema, lifecycle and local write safety"]
+    artifacts[("RFC / ADR / WI and clauses")]
+    events[("Append-only collaboration records")]
+    support["Guards and conformance mappings"]
+    coordination["Clone-local claims and ID reservations<br/>Workspace loops and round evidence"]
+    readers["check, render and query"]
+    views["Generated docs, JSON and read-only TUI"]
+    cli --> safety
+    safety --> artifacts
+    safety --> events
+    support --> safety
+    cli --> coordination
+    artifacts --> readers
+    events --> readers
+    coordination --> readers
+    support --> readers
+    readers --> views
+  end
+
+  subgraph future["DRAFT RFC-0012: repository-authoritative coordination"]
+    proposals["External clients propose<br/>requests, claims, handoffs and results"]
+    validation["Validate authority, input revision<br/>and current claim generation"]
+    main[("Canonical repository main")]
+    projected["Accepted request and ownership state"]
+    proposals -.-> validation
+    validation -. "conditional fast-forward" .-> main
+    main -. "revalidate after races" .-> validation
+    main -.-> projected
+  end
+
+  users --> cli
+  views ~~~ proposals
+
+  classDef implemented fill:#eaf3ff,stroke:#3869a4,color:#183453;
+  classDef localstate fill:#edf6f0,stroke:#4d7f62,color:#244a33;
+  classDef external fill:#f2f3f5,stroke:#727984,color:#303641;
+  classDef planned fill:#fff5df,stroke:#ad7a21,color:#624412,stroke-dasharray:6 4;
+  class cli,safety,artifacts,support,events,readers,views implemented;
+  class coordination localstate;
+  class users external;
+  class proposals,validation,main,projected planned;
