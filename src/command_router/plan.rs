@@ -29,6 +29,9 @@ pub enum Scope {
 
 #[derive(Debug, Clone)]
 pub enum BuiltinOp {
+    Coord {
+        command: crate::cli::CoordCommand,
+    },
     Collab {
         command: crate::cli::CollabCommand,
     },
@@ -178,6 +181,8 @@ pub enum BuiltinOp {
 impl BuiltinOp {
     fn is_lock_free(&self) -> bool {
         match self {
+            // Remote coordination uses an isolated temporary repository.
+            Self::Coord { .. } => true,
             Self::Collab { command } => command.is_read_only(),
             Self::Check { .. }
             | Self::Status

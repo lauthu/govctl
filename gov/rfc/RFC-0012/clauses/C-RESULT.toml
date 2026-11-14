@@ -5,6 +5,7 @@ id = "C-RESULT"
 title = "Revision-bound results and code targets"
 kind = "normative"
 status = "active"
+since = "0.1.0"
 
 [content]
 text = "Under the publication capability, a result MUST identify its request, actor, exact input revision, applicable request-claim generation and immutable outcome or resulting revision. An effective result MUST reference the current request-claim generation and, for a modifying result, all applicable current artifact write-claim generations at publication. A review MUST remain bound to the reviewed document digest and, for code review, an explicit immutable code commit; that code commit MUST NOT be inferred from the current coordination main HEAD. Coordination-only commits MUST NOT invalidate an approval whose document and code targets remain unchanged. Obsolete results MAY remain as explicitly ineffective history but MUST NOT be rebound to a newer input, claim or code revision. Accepted results MUST NOT bypass existing artifact lifecycle or guard requirements. These publication-mode bindings MUST NOT retroactively change the targets or interpretation of existing standalone collaboration records."

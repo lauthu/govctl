@@ -7,6 +7,12 @@ provides a standalone CLI and a machine-readable protocol. External clients can
 schedule agents, authenticate participants and manage credentials; govctl does
 not depend on a particular orchestration product.
 
+For shared request ownership across independent clones, use
+[Repository Coordination](coordination.md). Its `coord` commands publish signed
+control events on canonical `main`; the standalone `collab` commands below remain
+local artifact operations. Coordination does not start an agent or apply source
+changes automatically.
+
 ## Attribute a creation or edit
 
 `actor.json` is a caller-supplied input file for attribution, not a registered

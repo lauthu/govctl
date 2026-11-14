@@ -95,9 +95,11 @@ fn run(cli: &Cli) -> DiagnosticResult<Diagnostics> {
     let plan = command_router::CommandPlan::from_parsed(&cli.command, cli.dry_run)?;
     let project_independent = matches!(
         &plan.op,
-        command_router::Op::Builtin(command_router::BuiltinOp::Collab {
-            command: cli::CollabCommand::Capabilities { .. }
-        }) | command_router::Op::Builtin(command_router::BuiltinOp::Completions { .. })
+        command_router::Op::Builtin(command_router::BuiltinOp::Coord { .. })
+            | command_router::Op::Builtin(command_router::BuiltinOp::Collab {
+                command: cli::CollabCommand::Capabilities { .. }
+            })
+            | command_router::Op::Builtin(command_router::BuiltinOp::Completions { .. })
             | command_router::Op::Builtin(command_router::BuiltinOp::SelfUpdate { .. })
             | command_router::Op::Builtin(command_router::BuiltinOp::Agent { .. })
             | command_router::Op::Builtin(command_router::BuiltinOp::AgentHook { .. })
@@ -122,7 +124,12 @@ fn run(cli: &Cli) -> DiagnosticResult<Diagnostics> {
     } else {
         Config::load(cli.config.as_deref())?
     };
-    if !is_migrate {
+    if !is_migrate
+        && !matches!(
+            plan.op,
+            command_router::Op::Builtin(command_router::BuiltinOp::Coord { .. })
+        )
+    {
         load::reject_unmigrated_conformance(&config)?;
     }
 

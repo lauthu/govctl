@@ -1,5 +1,6 @@
 //! Portable, append-only collaboration attached to RFC/ADR/work items.
 //! Implements [[RFC-0011:C-SCOPE]], [[RFC-0011:C-CLI]].
+pub(crate) mod coordination;
 mod projection;
 mod records;
 mod source;

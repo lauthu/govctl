@@ -1,0 +1,49 @@
+#:schema ../schema/work.schema.json
+
+[govctl]
+id = "WI-2026-11-15-001"
+title = "Publish repository-authoritative coordination v1"
+status = "done"
+created = "2026-11-15"
+started = "2026-11-15"
+completed = "2026-11-15"
+refs = [
+    "RFC-0012",
+    "RFC-0011",
+]
+
+[content]
+description = "Deliver repository-authoritative coordination for RFC, ADR and Work Item collaboration so independent clones can publish requests, acquire or transfer execution ownership, and record immutable outcomes against shared main history. Scope includes the CLI, signed control history, external policy enforcement, compatibility and user documentation; external agent execution, source application and lifecycle automation remain outside this outcome."
+
+[[content.acceptance_criteria]]
+text = "Expose repository-main coordination capabilities, canonical snapshots and conditional publication receipts through the JSON CLI"
+status = "done"
+category = "added"
+
+[[content.acceptance_criteria]]
+text = "Enforce one execution holder per request and exclusive artifact write scopes across independent clones"
+status = "done"
+category = "added"
+
+[[content.acceptance_criteria]]
+text = "Support handoff offers and acceptance, release, cancellation, explicit takeover and fenced completion with immutable outcome references"
+status = "done"
+category = "added"
+
+[[content.acceptance_criteria]]
+text = "Validate signed causal history against externally anchored policies and preserve actor, issuer and delegated holder boundaries"
+status = "done"
+category = "security"
+
+[[content.acceptance_criteria]]
+text = "Preserve idempotent accepted operations and ineffective historical evidence while rejecting stale state, fabricated attempts and ambiguous publication as new authority"
+status = "done"
+category = "added"
+
+[[content.acceptance_criteria]]
+text = "Document coordination setup, action examples, compatibility and first-version limits with current architecture diagrams"
+status = "done"
+category = "chore"
+
+[verification]
+required_guards = ["GUARD-CARGO-TEST"]

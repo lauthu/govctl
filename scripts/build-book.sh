@@ -54,6 +54,7 @@ cat > "$SUMMARY" << 'EOF'
 - [Working with ADRs](./guide/adrs.md)
 - [Working with Work Items](./guide/work-items.md)
 - [Authors, Comments, and Reviews](./guide/collaboration.md)
+- [Repository Coordination](./guide/coordination.md)
 - [Conformance Cases](./guide/conformance-cases.md)
 - [Validation & Rendering](./guide/validation.md)
 

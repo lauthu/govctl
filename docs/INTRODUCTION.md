@@ -4,7 +4,7 @@ This book contains the governance documentation for **govctl**, an opinionated C
 
 The [Architecture guide](./guide/architecture.md) shows how the CLI, governance
 artifacts, collaboration records and validation fit together. It distinguishes
-implemented local coordination from the draft repository publication protocol.
+clone-local coordination from the repository publication protocol.
 
 ## How This Book Is Organized
 

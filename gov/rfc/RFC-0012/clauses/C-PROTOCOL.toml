@@ -1,0 +1,24 @@
+#:schema ../../../schema/clause.schema.json
+
+[govctl]
+id = "C-PROTOCOL"
+title = "First-version operation wire contract"
+kind = "normative"
+status = "active"
+since = "0.1.0"
+
+[content]
+text = """
+Apply input MUST be one JSON object containing `operationId`, `action`, `actor` and `requestId`. Actor shape MUST follow [[RFC-0011]]. Operation and request identities MUST be unique within the canonical repository. IDs MUST be bounded nonempty printable strings. Unknown operation fields MUST be rejected. Reusing an operation identity with a changed action, actor, signer key identity, target, precondition or other semantic input MUST fail with `COORD_IDEMPOTENCY_CONFLICT`.
+
+`publish` MUST additionally contain `target`, `requestedOperation`, `writeTargets` and `description`. `target` MUST retain the existing collaboration shape: `repoId`, `kind`, `id`, nullable `version`, `contentDigest`, nullable `commit`. Requested operation MUST be `review`, `draft`, `edit` or `implement`. Review MUST have empty `writeTargets`. Other operations MUST have a nonempty unique list of existing artifact IDs including the target ID. Publishing MUST capture each write artifact's exact source target. The first version MUST NOT create source artifacts. The fixed target and write inputs MUST be current when publishing, granting or transferring authority, and accepting an effective completion. An explicit target code commit MUST retain its meaning independently of coordination HEAD.
+
+Every action after publish MUST contain `expectedState`, `expectedGeneration` and `expectedWrites`. These MUST identify the request's last state-event ID, its request generation and the full applicable map of artifact IDs to write generations. Claim MUST name the full immutable write scope. Operations on a held request MUST name all held write scopes. Cancellation of an open request and every read-only review MUST use an empty write map. Ownership-changing transitions MUST advance affected generations; a handoff offer MUST advance state-event identity without changing ownership generations.
+
+`claim`, `accept` and `takeover` MUST include a new `holder` object containing `subjectId`, `claimId` and `sessionId`. These attempt identifiers MUST remain distinct from contributor identity. Claim MUST require an open request and free write scopes. Acceptance MUST require the offered subject and still-current offer. Takeover MUST require active ownership, an explicit takeover authorization and a nonempty `reason`.
+
+`handoff`, `release` and `complete` MUST include the current `claimId` and `sessionId`. Handoff MUST include `toSubjectId` and `checkpoint`, with checkpoint fields `summary`, nullable `commit` and `remaining`. A new valid offer MAY replace an earlier offer using current causal preconditions. Release MUST return the request to open and invalidate the offer and claims. `cancel` MUST include a nonempty `reason` and MUST make an open or held request terminal while invalidating ownership.
+
+`complete` MUST contain a `result` with nonempty `summary` and optional `verdict`, nullable `commit` and `references`. Verdict, when present, MUST be `approved`, `changes_requested` or `comment`; references MUST be bounded textual evidence references. For a new apply operation, checkpoint, target and result commits, when supplied, MUST be immutable object IDs reachable from the canonical remote's currently advertised branches or tags; an unpublished local commit MUST be rejected. Granting or transferring authority and accepting an effective completion MUST also validate current reachability of the fixed request code target. A pushed feature-branch commit MAY be referenced before merge to main. An effective completion MUST be terminal and release write ownership. It MUST record an outcome reference, without applying source changes or establishing a legacy standalone review approval.
+
+`complete` MAY specify `allowObsolete: true` to append explicitly ineffective evidence. The supplied expected state, generation, holder, claim/session and input MUST match a real accepted historical attempt. This mode MUST still authorize the actor and MUST NOT change the current state, holder, result or generations. Fabricated attempts MUST be rejected. For holder-bound actions an optional `onBehalfOf` MUST follow [[RFC-0012:C-POLICY]]."""

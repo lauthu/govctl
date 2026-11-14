@@ -302,7 +302,8 @@ loop-state inspection with dependency DAG context, guards, releases, tags, and
 
 ## Documentation
 
-- [Architecture](docs/guide/architecture.md) — implemented components and draft cross-clone coordination
+- [Architecture](docs/guide/architecture.md) — governance components and repository-main coordination
+- [Repository Coordination](docs/guide/coordination.md) — publish requests, claim work and transfer ownership across clones
 - [Authors, Comments, and Reviews](docs/guide/collaboration.md) — explicit Agent attribution and repository-native discussions
 
 - [User Guide](https://govctl-org.github.io/govctl/)

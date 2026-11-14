@@ -3,6 +3,7 @@
 mod collaboration;
 mod commands;
 mod common;
+mod coordination;
 mod help;
 mod loop_cmd;
 mod recovery;
@@ -13,6 +14,7 @@ pub(crate) use commands::{
     AgentCommand, AgentHookEvent, ClaimCommand, Commands, ReleaseArgs, ReleaseCommand,
 };
 pub(crate) use common::*;
+pub(crate) use coordination::CoordCommand;
 pub(crate) use loop_cmd::LoopCommand;
 pub(crate) use recovery::{misrouted_clause_after_parse, misrouted_nested_clause};
 pub(crate) use resources::*;
