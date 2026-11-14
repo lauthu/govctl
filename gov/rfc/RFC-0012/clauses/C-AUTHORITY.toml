@@ -1,0 +1,10 @@
+#:schema ../../../schema/clause.schema.json
+
+[govctl]
+id = "C-AUTHORITY"
+title = "Canonical repository authority"
+kind = "normative"
+status = "active"
+
+[content]
+text = "In repository publication mode, the configured canonical repository's main branch MUST be the authority for shared request and execution-ownership state. An update MUST become effective only after successful publication on that branch and protocol validation against its actual predecessor. Unpublished local records and unmerged pull requests MUST NOT grant execution ownership. Invalid or unauthorized records MUST NOT confer execution rights. Independent clones observing the same accepted history and policy context MUST derive the same shared state."

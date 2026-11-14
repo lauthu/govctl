@@ -1,0 +1,10 @@
+#:schema ../../../schema/clause.schema.json
+
+[govctl]
+id = "C-COMPATIBILITY"
+title = "Capability and existing-history compatibility"
+kind = "normative"
+status = "active"
+
+[content]
+text = "Publication-mode clients MUST negotiate an explicit capability before relying on cross-clone execution ownership or publication-mode review targets. An unsupported capability MUST produce an unsupported-operation result rather than falling back to clone-local claims. Existing formatVersion 1 and 2 collaboration records MUST retain their bytes, identities and interpretation under [[RFC-0011:C-COMPATIBILITY]]; migration MUST NOT turn historical assignments or execution receipts into current ownership, or rebind historical reviews to publication-mode targets. The local claims, reservations and presence defined by [[RFC-0010]] MUST remain clone-local and MUST NOT be treated as distributed ownership witnesses. Existing standalone artifact commands and read-only views MUST remain usable without enabling repository publication mode."

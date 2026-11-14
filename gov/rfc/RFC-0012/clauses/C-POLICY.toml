@@ -1,0 +1,10 @@
+#:schema ../../../schema/clause.schema.json
+
+[govctl]
+id = "C-POLICY"
+title = "External authorization and explicit policy context"
+kind = "normative"
+status = "active"
+
+[content]
+text = "Runtime scheduling, participant authentication, signer-to-subject bindings, permission management and credentials MUST remain responsibilities of external clients or authorities. govctl MUST validate protocol structure, revision bindings and causal state using explicit authorization and policy context supplied for the operation. An authorization decision MUST identify the authority and policy revision used without persisting credentials. A repository-embedded key, an asserted role or Git push permission alone MUST NOT establish an actor's execution or approval authority. Approval requirements and transfer permissions MUST be supplied explicitly by the governing policy rather than inferred from a particular orchestration product."

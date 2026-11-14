@@ -1,0 +1,10 @@
+#:schema ../../../schema/clause.schema.json
+
+[govctl]
+id = "C-PUBLICATION"
+title = "Conditional publication and semantic revalidation"
+kind = "normative"
+status = "active"
+
+[content]
+text = "An accepted coordination update MUST advance canonical main by a conditional fast-forward against the exact authoritative parent used for its validation. Forced updates MUST NOT be accepted as protocol publication. A stale publication parent or conflicting claim MUST cause a conflict rather than silently granting authority. Granting execution authority or accepting an effective result against a changed input revision MUST cause a conflict. Changed input alone MUST NOT prevent cancellation, claim release or publication of explicitly ineffective history; those operations MUST still satisfy their applicable authorization and causal-state requirements. After a publication race, retrying clients MUST validate the operation against the newly observed authoritative state; a successful textual rebase alone MUST NOT establish semantic validity. When branch protection requires pull requests or a merge queue, the same conditions MUST hold at the final main update, and ownership MUST remain ineffective until that update succeeds."

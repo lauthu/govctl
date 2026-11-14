@@ -1,0 +1,10 @@
+#:schema ../../../schema/clause.schema.json
+
+[govctl]
+id = "C-EXCLUSION"
+title = "Exclusive modification and parallel review"
+kind = "normative"
+status = "active"
+
+[content]
+text = "At most one current execution claim MUST authorize execution of a given request, including a read-only review request. A modifying request MUST additionally hold exclusive write claims for every existing artifact it changes; at most one current write claim MUST authorize modification of a given artifact. A modifying result MUST identify its full write scope, and its publication MUST be rejected unless its executing holder has the required current claims for that scope. New artifact identities MUST remain unique in accepted repository state. Distinct read-only review requests for the same immutable revision MAY run concurrently and MUST NOT acquire artifact write ownership merely by reviewing. A request that changes an artifact's lifecycle MUST satisfy the same write-ownership rules as a content modification, in addition to the existing lifecycle and verification requirements."

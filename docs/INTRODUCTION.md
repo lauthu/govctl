@@ -2,6 +2,10 @@
 
 This book contains the governance documentation for **govctl**, an opinionated CLI for RFC-driven software development.
 
+The [Architecture guide](./guide/architecture.md) shows how the CLI, governance
+artifacts, collaboration records and validation fit together. It distinguishes
+implemented local coordination from the draft repository publication protocol.
+
 ## How This Book Is Organized
 
 ### Specifications
@@ -33,7 +37,9 @@ gov/
 └── releases.toml         # Release history
 ```
 
-The markdown files in this book are **rendered projections** — generated from the SSOT by `govctl render`. Each includes a SHA-256 signature for tampering detection.
+The RFC, ADR and Work Item pages are **rendered projections** — generated from
+the SSOT by `govctl render`. Each includes a SHA-256 signature for tampering
+detection. User Guide pages are hand-authored explanations.
 
 ## Phase Discipline
 
