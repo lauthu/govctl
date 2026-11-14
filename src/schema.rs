@@ -94,6 +94,10 @@ pub fn with_schema_header(kind: ArtifactSchema, body: &str) -> String {
 
 pub const ARTIFACT_SCHEMA_TEMPLATES: &[SchemaTemplate] = &[
     SchemaTemplate {
+        filename: "collaboration.schema.json",
+        content: include_str!("assets/collaboration.schema.json"),
+    },
+    SchemaTemplate {
         filename: "rfc.schema.json",
         content: include_str!("../gov/schema/rfc.schema.json"),
     },

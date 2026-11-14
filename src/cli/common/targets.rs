@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use crate::model::ClauseKind;
 use clap::{Subcommand, ValueEnum};
 
@@ -10,6 +12,12 @@ pub(crate) enum NewTarget {
         /// RFC ID (e.g., RFC-0010). Auto-generated if omitted.
         #[arg(long)]
         id: Option<String>,
+        /// Explicit JSON actor context
+        #[arg(long)]
+        actor_file: Option<PathBuf>,
+        /// Repository identity used in the contribution target
+        #[arg(long, requires = "actor_file")]
+        repo_id: Option<String>,
     },
     /// Create a new clause
     Clause {
@@ -28,6 +36,12 @@ pub(crate) enum NewTarget {
     Adr {
         /// ADR title
         title: String,
+        /// Explicit JSON actor context
+        #[arg(long)]
+        actor_file: Option<PathBuf>,
+        /// Repository identity used in the contribution target
+        #[arg(long, requires = "actor_file")]
+        repo_id: Option<String>,
     },
     /// Create a new work item
     Work {
@@ -36,6 +50,12 @@ pub(crate) enum NewTarget {
         /// Immediately activate the work item
         #[arg(long)]
         active: bool,
+        /// Explicit JSON actor context
+        #[arg(long)]
+        actor_file: Option<PathBuf>,
+        /// Repository identity used in the contribution target
+        #[arg(long, requires = "actor_file")]
+        repo_id: Option<String>,
     },
 }
 

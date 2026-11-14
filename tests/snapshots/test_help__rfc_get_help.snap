@@ -35,7 +35,7 @@ Options:
           Print help (see a summary with '-h')
 
 VALID FIELDS:
-    - title, version, status, phase, owners, refs, changelog
+    - title, version, status, phase, owners, refs, changelog, created_by
 
 EXAMPLES:
     govctl rfc get RFC-0001

@@ -47,6 +47,13 @@ pub fn render_rfc_with_projection(
     let suppress_body =
         projection == RenderProjection::Current && rfc.rfc.status == RfcStatus::Deprecated;
 
+    if let Some(actor) = &rfc.rfc.created_by {
+        let _ = writeln!(
+            out,
+            "> **Created by (declared):** {} (`{}`)",
+            actor.name, actor.subject_id
+        );
+    }
     if !rfc.rfc.owners.is_empty() {
         let _ = writeln!(out, "> **Owners:** {}", rfc.rfc.owners.join(", "));
     }

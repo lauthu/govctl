@@ -6,7 +6,10 @@ title = "ADR Definition"
 kind = "normative"
 status = "active"
 since = "1.0.0"
-tags = ["core", "schema"]
+tags = [
+    "core",
+    "schema",
+]
 
 [content]
 text = """
@@ -32,4 +35,6 @@ ADR status lifecycle:
 
 **rejected**: Declined after consideration. Reason documented in decision field.
 
-**superseded**: Replaced by a newer ADR. Listed in `superseded_by` field."""
+**superseded**: Replaced by a newer ADR. Listed in `superseded_by` field.
+
+The optional [govctl] field created_by MAY record an explicitly declared stable actor under [[RFC-0011:C-ACTOR]]. Attached authorship, comments and reviews follow [[RFC-0011]]; omitted creator identity MUST remain unknown."""

@@ -1,0 +1,40 @@
+#:schema ../../schema/rfc.schema.json
+
+[govctl]
+id = "RFC-0011"
+title = "Portable authorship and attached collaboration records"
+version = "0.1.1"
+status = "normative"
+phase = "test"
+owners = ["@govctl-org"]
+created = "2026-11-13"
+updated = "2026-11-14"
+signature = "24cab345ba8ca2165ae1e9e1db77a0365df58fc534513e0cabf617d75805d975"
+
+[[sections]]
+title = "Summary"
+
+[[sections]]
+title = "Specification"
+clauses = [
+    "clauses/C-SCOPE.toml",
+    "clauses/C-ACTOR.toml",
+    "clauses/C-STORAGE.toml",
+    "clauses/C-TARGET.toml",
+    "clauses/C-REVIEW.toml",
+    "clauses/C-TRUST.toml",
+    "clauses/C-COMPATIBILITY.toml",
+    "clauses/C-CLI.toml",
+    "clauses/C-ACCEPTANCE.toml",
+]
+
+[[changelog]]
+version = "0.1.1"
+date = "2026-11-14"
+notes = "Clarify client-independent collaboration responsibilities"
+fixed = ["Define portable collaboration without a dependency on an orchestration product"]
+
+[[changelog]]
+version = "0.1.0"
+date = "2026-11-13"
+notes = "Initial draft"

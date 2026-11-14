@@ -1,5 +1,6 @@
 //! CLI argument definitions for govctl.
 
+mod collaboration;
 mod commands;
 mod common;
 mod help;
@@ -7,6 +8,7 @@ mod loop_cmd;
 mod recovery;
 mod resources;
 
+pub(crate) use collaboration::CollabCommand;
 pub(crate) use commands::{
     AgentCommand, AgentHookEvent, ClaimCommand, Commands, ReleaseArgs, ReleaseCommand,
 };

@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use clap::Subcommand;
 
 use crate::model::RfcPhase;
@@ -24,7 +26,7 @@ EXAMPLES:
     /// Get RFC metadata or specific field
     #[command(after_help = "\
 VALID FIELDS:
-    - title, version, status, phase, owners, refs, changelog
+    - title, version, status, phase, owners, refs, changelog, created_by
 
 EXAMPLES:
     govctl rfc get RFC-0001
@@ -63,6 +65,12 @@ NOTES:
         /// RFC ID (e.g., RFC-0010). Auto-generated if omitted.
         #[arg(long)]
         id: Option<String>,
+        /// JSON actor context declaring the creator (not an authentication credential)
+        #[arg(long)]
+        actor_file: Option<PathBuf>,
+        /// Repository identity used in the contribution target
+        #[arg(long, requires = "actor_file")]
+        repo_id: Option<String>,
     },
     /// Canonical path-first edit entrypoint
     #[command(after_help = "\

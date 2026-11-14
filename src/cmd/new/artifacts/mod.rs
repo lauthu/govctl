@@ -44,15 +44,60 @@ pub(super) fn write_new_artifact_toml<T: Serialize>(
 
 /// Create a new artifact.
 pub fn create(config: &Config, target: &NewTarget, op: WriteOp) -> DiagnosticResult<Diagnostics> {
+    let (actor_file, repo_id) = match target {
+        NewTarget::Rfc {
+            actor_file,
+            repo_id,
+            ..
+        }
+        | NewTarget::Adr {
+            actor_file,
+            repo_id,
+            ..
+        }
+        | NewTarget::Work {
+            actor_file,
+            repo_id,
+            ..
+        } => (actor_file.as_deref(), repo_id.as_deref()),
+        NewTarget::Clause { .. } => (None, None),
+    };
+    if let Some(repo_id) = repo_id {
+        crate::collaboration::validate_repo_id(repo_id)?;
+    }
+    let actor = actor_file.map(crate::model::read_actor_file).transpose()?;
     match target {
-        NewTarget::Rfc { title, id } => rfc::create(config, title, id.as_deref(), op),
+        NewTarget::Rfc {
+            title, id, repo_id, ..
+        } => rfc::create(
+            config,
+            title,
+            id.as_deref(),
+            actor.as_ref(),
+            repo_id.as_deref(),
+            op,
+        ),
         NewTarget::Clause {
             clause_id,
             title,
             section,
             kind,
         } => clause::create(config, clause_id, title, section, *kind, op),
-        NewTarget::Adr { title } => adr::create(config, title, op),
-        NewTarget::Work { title, active } => work::create(config, title, *active, op),
+        NewTarget::Adr { title, repo_id, .. } => {
+            adr::create(config, title, actor.as_ref(), repo_id.as_deref(), op)
+        }
+        NewTarget::Work {
+            title,
+            active,
+            repo_id,
+            ..
+        } => work::create(
+            config,
+            title,
+            *active,
+            actor.as_ref(),
+            repo_id.as_deref(),
+            op,
+        ),
     }
 }

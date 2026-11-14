@@ -7,6 +7,7 @@ mod artifact_catalog;
 mod artifact_index;
 mod cli;
 mod cmd;
+mod collaboration;
 mod command_router;
 mod config;
 mod diagnostic;
@@ -94,7 +95,9 @@ fn run(cli: &Cli) -> DiagnosticResult<Diagnostics> {
     let plan = command_router::CommandPlan::from_parsed(&cli.command, cli.dry_run)?;
     let project_independent = matches!(
         &plan.op,
-        command_router::Op::Builtin(command_router::BuiltinOp::Completions { .. })
+        command_router::Op::Builtin(command_router::BuiltinOp::Collab {
+            command: cli::CollabCommand::Capabilities { .. }
+        }) | command_router::Op::Builtin(command_router::BuiltinOp::Completions { .. })
             | command_router::Op::Builtin(command_router::BuiltinOp::SelfUpdate { .. })
             | command_router::Op::Builtin(command_router::BuiltinOp::Agent { .. })
             | command_router::Op::Builtin(command_router::BuiltinOp::AgentHook { .. })

@@ -1,0 +1,11 @@
+#:schema ../../../schema/clause.schema.json
+
+[govctl]
+id = "C-REVIEW"
+title = "Comments review state and resolution"
+kind = "normative"
+status = "active"
+since = "0.1.0"
+
+[content]
+text = "Native comments and reviews MUST record their actor, creation time, target and body. Reviews MUST distinguish approved, changes_requested and comment. Replies and explicit resolution records MUST refer to existing records of the same artifact. Query projection MUST distinguish current, stale, resolved and unverified conclusions, creator declaration and confirmed authorship, and independent approvals from self-review. Unknown authors MUST NOT permit an effective independent approval. An unresolved trusted changes_requested remains blocking until explicitly resolved. Approval MUST NOT advance an artifact lifecycle automatically. Clients MAY apply stricter live membership policy."

@@ -16,11 +16,18 @@ type CommandResult = DiagnosticResult<Diagnostics>;
 
 fn execute_create(config: &Config, create: &CreateOp, op: WriteOp) -> CommandResult {
     match create {
-        CreateOp::Rfc { title, id } => cmd::new::create(
+        CreateOp::Rfc {
+            title,
+            id,
+            actor_file,
+            repo_id,
+        } => cmd::new::create(
             config,
             &NewTarget::Rfc {
                 title: title.clone(),
                 id: id.clone(),
+                actor_file: actor_file.clone(),
+                repo_id: repo_id.clone(),
             },
             op,
         ),
@@ -45,18 +52,31 @@ fn execute_create(config: &Config, create: &CreateOp, op: WriteOp) -> CommandRes
             )?);
             Ok(diags)
         }
-        CreateOp::Adr { title } => cmd::new::create(
+        CreateOp::Adr {
+            title,
+            actor_file,
+            repo_id,
+        } => cmd::new::create(
             config,
             &NewTarget::Adr {
                 title: title.clone(),
+                actor_file: actor_file.clone(),
+                repo_id: repo_id.clone(),
             },
             op,
         ),
-        CreateOp::Work { title, active } => cmd::new::create(
+        CreateOp::Work {
+            title,
+            active,
+            actor_file,
+            repo_id,
+        } => cmd::new::create(
             config,
             &NewTarget::Work {
                 title: title.clone(),
                 active: *active,
+                actor_file: actor_file.clone(),
+                repo_id: repo_id.clone(),
             },
             op,
         ),
@@ -120,9 +140,51 @@ fn execute_show(
 
 fn execute_edit(plan: &CommandPlan, config: &Config, edit: &EditOp, op: WriteOp) -> CommandResult {
     match edit {
-        EditOp::Field { action } => {
+        EditOp::Field {
+            action,
+            actor_file,
+            repo_id,
+        } => {
             let (artifact, id, target) = extract_target_scope(&plan.scope)?;
             let path = target.display_path();
+            if let Some(repo_id) = repo_id {
+                crate::collaboration::validate_repo_id(repo_id)?;
+            }
+            let actor = actor_file
+                .as_deref()
+                .map(crate::model::read_actor_file)
+                .transpose()?;
+            if actor.is_some()
+                && matches!(
+                    artifact,
+                    cmd::edit::ArtifactType::Guard | cmd::edit::ArtifactType::Conformance
+                )
+            {
+                return Err(Diagnostic::new(
+                    DiagnosticCode::E0822UnsupportedOperation,
+                    "Actor context is supported for RFC, ADR, Work Item and Clause content edits",
+                    id,
+                ));
+            }
+            let attribution_id = if artifact == cmd::edit::ArtifactType::Clause {
+                rfc_id_of_clause(id)
+            } else {
+                id
+            };
+            // [[RFC-0011:C-ACTOR]]: assignments and lifecycle-only actions do not
+            // establish authorship. Track explicit content edits only.
+            let record_author = actor.is_some()
+                && !op.is_preview()
+                && is_authored_content_edit(artifact, &path, action);
+            let authored_root = path.split(['.', '[']).next().unwrap_or(&path);
+            let before = if record_author {
+                Some((
+                    crate::collaboration::source_digest(config, attribution_id)?,
+                    attribution_field_value(config, artifact, id, authored_root)?,
+                ))
+            } else {
+                None
+            };
             // [[RFC-0010:C-ARTIFACT-CLAIM]]: content edits on an RFC claimed
             // by another workspace warn without blocking.
             let mut diags = match artifact {
@@ -139,8 +201,68 @@ fn execute_edit(plan: &CommandPlan, config: &Config, edit: &EditOp, op: WriteOp)
                 action,
                 op,
             })?);
+            if let (Some((before_digest, before_value)), Some(actor)) = (before, actor.as_ref())
+                && before_value != attribution_field_value(config, artifact, id, authored_root)?
+                && before_digest != crate::collaboration::source_digest(config, attribution_id)?
+            {
+                crate::collaboration::append_authorship(
+                    config,
+                    attribution_id,
+                    actor,
+                    false,
+                    repo_id.as_deref(),
+                    op,
+                )?;
+            }
             Ok(diags)
         }
+    }
+}
+
+fn attribution_field_value(
+    config: &Config,
+    artifact: cmd::edit::ArtifactType,
+    id: &str,
+    field: &str,
+) -> DiagnosticResult<serde_json::Value> {
+    // Anchors are writable but deliberately have no public field-level `get` verb.
+    if artifact == cmd::edit::ArtifactType::Clause && field == "anchors" {
+        return Ok(cmd::edit::read_field_value(config, id, None)?
+            .get(field)
+            .cloned()
+            .unwrap_or(serde_json::Value::Null));
+    }
+    cmd::edit::read_field_value(config, id, Some(field))
+}
+
+/// Metadata concerning ownership or progress is deliberately outside attribution.
+fn is_authored_content_edit(
+    artifact: cmd::edit::ArtifactType,
+    path: &str,
+    action: &super::OwnedEditAction,
+) -> bool {
+    if matches!(action, super::OwnedEditAction::Tick { .. }) {
+        return false;
+    }
+    let root = path.split(['.', '[']).next().unwrap_or(path);
+    if artifact == cmd::edit::ArtifactType::WorkItem
+        && root == "acceptance_criteria"
+        && path.ends_with(".status")
+    {
+        return false;
+    }
+    match artifact {
+        cmd::edit::ArtifactType::Rfc => matches!(root, "title" | "refs" | "changelog" | "sections"),
+        cmd::edit::ArtifactType::Clause => matches!(root, "title" | "text" | "kind" | "anchors"),
+        cmd::edit::ArtifactType::Adr => matches!(
+            root,
+            "title" | "context" | "decision" | "consequences" | "alternatives" | "refs"
+        ),
+        cmd::edit::ArtifactType::WorkItem => matches!(
+            root,
+            "title" | "description" | "acceptance_criteria" | "notes" | "refs"
+        ),
+        _ => false,
     }
 }
 

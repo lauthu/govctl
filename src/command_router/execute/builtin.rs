@@ -7,6 +7,9 @@ use super::{CommandResult, render::execute_global_render};
 
 pub(super) fn execute_builtin(config: &Config, builtin: &BuiltinOp, op: WriteOp) -> CommandResult {
     match builtin {
+        BuiltinOp::Collab { command } => {
+            crate::collaboration::execute(config, command.clone(), op).map(|()| vec![])
+        }
         BuiltinOp::Init { force } => cmd::new::init_project(config, *force, op),
         BuiltinOp::InitSkills { force, format, dir } => {
             cmd::new::sync_skills(config, *force, format, dir.as_deref(), op)

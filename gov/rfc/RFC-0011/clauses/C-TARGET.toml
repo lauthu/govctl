@@ -1,0 +1,11 @@
+#:schema ../../../schema/clause.schema.json
+
+[govctl]
+id = "C-TARGET"
+title = "Exact revision targets"
+kind = "normative"
+status = "active"
+since = "0.1.0"
+
+[content]
+text = "A target MUST identify repoId, kind, id, optional version, contentDigest and optional code commit. For compatibility the document digest MUST be SHA-256 of the compact JSON array of manifest entries with ordered path and sha256 fields, sorted by relative POSIX path. RFC manifests include rfc.toml and its referenced clause TOML files; ADR/WI manifests include their source TOML file. Attached events MUST be excluded. Reads MUST reject source changes during snapshot capture. Append MUST require the current target unless an explicit stale-history operation preserves an older target. It MUST NOT rebind an old review to new content."

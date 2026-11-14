@@ -29,6 +29,9 @@ pub enum Scope {
 
 #[derive(Debug, Clone)]
 pub enum BuiltinOp {
+    Collab {
+        command: crate::cli::CollabCommand,
+    },
     Init {
         force: bool,
     },
@@ -175,6 +178,7 @@ pub enum BuiltinOp {
 impl BuiltinOp {
     fn is_lock_free(&self) -> bool {
         match self {
+            Self::Collab { command } => command.is_read_only(),
             Self::Check { .. }
             | Self::Status
             | Self::Verify { .. }
@@ -215,6 +219,8 @@ pub enum CreateOp {
     Rfc {
         title: String,
         id: Option<String>,
+        actor_file: Option<PathBuf>,
+        repo_id: Option<String>,
     },
     Clause {
         clause_id: String,
@@ -224,10 +230,14 @@ pub enum CreateOp {
     },
     Adr {
         title: String,
+        actor_file: Option<PathBuf>,
+        repo_id: Option<String>,
     },
     Work {
         title: String,
         active: bool,
+        actor_file: Option<PathBuf>,
+        repo_id: Option<String>,
     },
     Guard {
         title: String,
@@ -236,7 +246,11 @@ pub enum CreateOp {
 
 #[derive(Debug, Clone)]
 pub enum EditOp {
-    Field { action: OwnedEditAction },
+    Field {
+        action: OwnedEditAction,
+        actor_file: Option<PathBuf>,
+        repo_id: Option<String>,
+    },
 }
 
 #[derive(Debug, Clone)]

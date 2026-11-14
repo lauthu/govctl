@@ -10,6 +10,8 @@ pub(super) fn create(
     config: &Config,
     title: &str,
     manual_id: Option<&str>,
+    actor: Option<&crate::model::Actor>,
+    repo_id: Option<&str>,
     op: WriteOp,
 ) -> DiagnosticResult<Diagnostics> {
     let rfcs_dir = config.rfc_dir();
@@ -87,6 +89,7 @@ pub(super) fn create(
         phase: RfcPhase::Spec,
         owners: vec![config.project.default_owner.clone()],
         created: today(),
+        created_by: actor.cloned(),
         updated: None,
         supersedes: None,
         refs: vec![],
@@ -127,6 +130,9 @@ pub(super) fn create(
         op,
     )?;
     reservation.record(&rfc_id, &rfc_toml);
+    if let Some(actor) = actor {
+        crate::collaboration::append_authorship(config, &rfc_id, actor, true, repo_id, op)?;
+    }
 
     if !op.is_preview() {
         ui::created("RFC", &config.display_path(&rfc_toml));

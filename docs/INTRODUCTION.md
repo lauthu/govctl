@@ -56,3 +56,4 @@ Phases cannot be skipped. This discipline ensures specifications precede impleme
 2. Follow the [Getting Started guide](./guide/getting-started.md) to install and initialize
 3. Read the [Recommended Workflows guide](./guide/recommended-workflows.md) to choose the right path for each change
 4. Learn about [RFCs](./guide/rfcs.md), [ADRs](./guide/adrs.md), and [Work Items](./guide/work-items.md)
+5. Add [authors, comments, and reviews](./guide/collaboration.md) that remain portable in the repository

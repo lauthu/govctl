@@ -13,6 +13,7 @@ Created: gov/guard
 Created: gov/conformance
 Created: gov/templates
 Created: gov/config.toml
+Created: gov/schema/collaboration.schema.json
 Created: gov/schema/rfc.schema.json
 Created: gov/schema/clause.schema.json
 Created: gov/schema/adr.schema.json

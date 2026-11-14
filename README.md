@@ -302,6 +302,8 @@ loop-state inspection with dependency DAG context, guards, releases, tags, and
 
 ## Documentation
 
+- [Authors, Comments, and Reviews](docs/guide/collaboration.md) — explicit Agent attribution and repository-native discussions
+
 - [User Guide](https://govctl-org.github.io/govctl/)
 - [Validation & Rendering](https://github.com/govctl-org/govctl/blob/main/docs/guide/validation.md)
 - [Working with Work Items](https://github.com/govctl-org/govctl/blob/main/docs/guide/work-items.md)

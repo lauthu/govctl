@@ -2,6 +2,59 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "RFC Specification",
   "description": "JSON Schema for RFC TOML artifacts with [govctl] metadata section",
+  "definitions": {
+    "actor": {
+      "type": "object",
+      "required": ["subjectId", "name"],
+      "properties": {
+        "subjectId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300,
+          "pattern": "^(?=.*\\S)[^\\u0000-\\u001f\\u007f]*$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300,
+          "pattern": "^(?=.*\\S)[^\\u0000-\\u001f\\u007f]*$"
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["human", "agent"]
+        },
+        "agentId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300,
+          "pattern": "^(?=.*\\S)[^\\u0000-\\u001f\\u007f]*$"
+        },
+        "participantId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300,
+          "pattern": "^(?=.*\\S)[^\\u0000-\\u001f\\u007f]*$"
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300,
+          "pattern": "^(?=.*\\S)[^\\u0000-\\u001f\\u007f]*$"
+        },
+        "roles": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300,
+            "pattern": "^(?=.*\\S)[^\\u0000-\\u001f\\u007f]*$"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
   "type": "object",
   "required": ["govctl", "sections"],
   "properties": {
@@ -17,6 +70,7 @@
         "created"
       ],
       "properties": {
+        "created_by": { "$ref": "#/definitions/actor" },
         "id": {
           "type": "string",
           "pattern": "^RFC-\\d{4}$"

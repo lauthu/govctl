@@ -15,17 +15,23 @@ Arguments:
           Canonical field path
 
 Options:
+      --actor-file <ACTOR_FILE>
+          JSON actor context for a revision-bound content contribution
+
   -C, --config <CONFIG>
           Path to govctl config (TOML)
+
+      --dry-run
+          Dry run: preview changes without writing files
+
+      --repo-id <REPO_ID>
+          Repository identity used in the contribution target
 
       --set [<SET>]
           Set a scalar value (omit VALUE only when using --stdin)
 
       --add [<ADD>]
           Append a value to a list (omit VALUE only when using --stdin)
-
-      --dry-run
-          Dry run: preview changes without writing files
 
       --remove [<REMOVE>]
           Remove a matching value, or omit PATTERN when removing an indexed path

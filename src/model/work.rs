@@ -1,3 +1,4 @@
+use super::Actor;
 use super::changelog::ChangelogCategory;
 use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
@@ -11,6 +12,9 @@ pub struct WorkItemMeta {
     pub status: WorkItemStatus,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub created: Option<String>,
+    /// Explicit creator declaration; absent for unknown historical authors.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created_by: Option<Actor>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub started: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -30,6 +34,7 @@ impl WorkItemMeta {
             title: title.into(),
             status,
             created: None,
+            created_by: None,
             started: None,
             completed: None,
             refs: vec![],

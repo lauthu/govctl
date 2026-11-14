@@ -25,6 +25,7 @@ fn test_rfc() -> RfcSpec {
         phase: RfcPhase::Spec,
         owners: vec![],
         created: "2026-07-16".to_string(),
+        created_by: None,
         updated: None,
         supersedes: None,
         refs: vec![],

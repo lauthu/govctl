@@ -146,6 +146,7 @@ fn test_rfc_index() -> RfcIndex {
             phase: RfcPhase::Impl,
             owners: vec!["@test-user".to_string()],
             created: "2026-06-15".to_string(),
+            created_by: None,
             updated: None,
             supersedes: None,
             refs: vec![],

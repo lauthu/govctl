@@ -743,6 +743,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e7c1832837b905bbfb5101e07cc24c8deddf52f93225eee6ead5f4d63d53ddcb"
 dependencies = [
  "const-oid",
+ "pem-rfc7468",
  "zeroize",
 ]
 
@@ -1225,12 +1226,14 @@ version = "0.22.0"
 dependencies = [
  "agent-plugin-installer",
  "ansi-to-tui",
+ "base64 0.22.1",
  "chrono",
  "clap",
  "clap_complete",
  "comfy-table",
  "crossterm",
  "directories",
+ "ed25519-dalek",
  "fs2",
  "ignore",
  "insta",
@@ -1242,6 +1245,7 @@ dependencies = [
  "ratatui",
  "regex",
  "rusqlite",
+ "ryu-js",
  "self_update",
  "semver",
  "serde",
@@ -2205,6 +2209,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "pem-rfc7468"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "88b39c9bfcfc231068454382784bb460aae594343fb030d46e9f50a645418412"
+dependencies = [
+ "base64ct",
+]
+
+[[package]]
 name = "percent-encoding"
 version = "2.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2885,6 +2898,12 @@ name = "ryu"
 version = "1.0.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9774ba4a74de5f7b1c1451ed6cd5285a32eddb5cccb8cc655a4e50009e06477f"
+
+[[package]]
+name = "ryu-js"
+version = "1.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "04d056b875a9d2e6cb9a61d127afee9ac5999b9f87bcb32079d1318e505be714"
 
 [[package]]
 name = "same-file"

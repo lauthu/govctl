@@ -44,7 +44,17 @@ fn compile_common_show(artifact: cmd::edit::ArtifactType, args: &CommonShowArgs)
 }
 
 fn compile_common_edit(args: &CommonEditArgs) -> DiagnosticResult<CommandPlan> {
-    plan_edit(&args.id, &args.path, owned_edit_action(&args.action)?)
+    let mut plan = plan_edit(&args.id, &args.path, owned_edit_action(&args.action)?)?;
+    if let crate::command_router::Op::Edit(crate::command_router::EditOp::Field {
+        actor_file,
+        repo_id,
+        ..
+    }) = &mut plan.op
+    {
+        *actor_file = args.actor_file.clone();
+        *repo_id = args.repo_id.clone();
+    }
+    Ok(plan)
 }
 
 fn compile_common_render(

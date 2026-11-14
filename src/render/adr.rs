@@ -43,6 +43,13 @@ pub fn render_adr_with_projection(
         meta.status.as_ref(),
         meta.date
     );
+    if let Some(actor) = &meta.created_by {
+        let _ = writeln!(
+            out,
+            "> **Created by (declared):** {} (`{}`)",
+            actor.name, actor.subject_id
+        );
+    }
     if let Some(ref by) = meta.superseded_by {
         let _ = writeln!(out, "> **Superseded by:** {by}");
     }

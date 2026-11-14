@@ -94,4 +94,6 @@ RFCs, clauses, ADRs, Work Items, guards, and Conformance Cases MAY include an op
 
 **Future Extensions:**
 
-Additional resource types MAY be added via RFC amendment. New resource types MUST follow the same structural patterns defined in [[RFC-0002:C-CRUD-VERBS]]."""
+Additional resource types MAY be added via RFC amendment. New resource types MUST follow the same structural patterns defined in [[RFC-0002:C-CRUD-VERBS]].
+
+The collab top-level namespace MUST expose native attached-record operations defined by [[RFC-0011:C-CLI]]. It operates on existing RFC/ADR/Work Item identities and does not add a governed task resource type. Creation and edit commands MAY accept explicit structured actor context as defined by [[RFC-0011:C-ACTOR]]."""
