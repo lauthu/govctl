@@ -7,6 +7,9 @@ use super::{CommandResult, render::execute_global_render};
 
 pub(super) fn execute_builtin(config: &Config, builtin: &BuiltinOp, op: WriteOp) -> CommandResult {
     match builtin {
+        BuiltinOp::Coord { command } => {
+            crate::collaboration::coordination::execute(command.clone(), op).map(|()| vec![])
+        }
         BuiltinOp::Collab { command } => {
             crate::collaboration::execute(config, command.clone(), op).map(|()| vec![])
         }

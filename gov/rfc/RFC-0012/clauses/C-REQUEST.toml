@@ -5,6 +5,7 @@ id = "C-REQUEST"
 title = "Attached requests and operation identity"
 kind = "normative"
 status = "active"
+since = "0.1.0"
 
 [content]
 text = "A collaboration request MUST attach to an existing RFC, ADR or Work Item and identify its stable request identity, requested operation and exact input revision. That operation and input binding MUST be immutable; a different operation or input MUST require a new request identity. Claims MUST reference their request and its input binding. Completed or cancelled requests MUST NOT be claimed again or accept another completion. Requests, claims, handoffs and results MUST remain attached records rather than new governed task artifacts. Each state-changing operation MUST have a stable identity and semantic payload, including its actor, target and references to the state it changes. The same operation identity with different semantic content MUST be rejected; a retry with the same content MUST return the existing accepted result without duplicating its effects, including after request completion. A publication-parent witness MAY change during a retry without changing the operation's semantic intent."

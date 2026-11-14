@@ -1,0 +1,11 @@
+#:schema ../../../schema/clause.schema.json
+
+[govctl]
+id = "C-SCOPE"
+title = "First-version scope"
+kind = "informative"
+status = "active"
+since = "0.1.0"
+
+[content]
+text = "The first version coordinates repository-backed requests, exclusive ownership, explicit handoff and immutable outcome references. It publishes signed control records attached to RFCs, ADRs and Work Items. External clients authenticate participants, schedule or run agents, apply source or code changes, and invoke governed lifecycle operations. Completing a coordination request records its outcome; it is not evidence that code was merged, an artifact lifecycle advanced or a verification guard passed. Ordinary fast-forward publication to canonical main is supported; protected-branch automation, merge-queue integration, automatic takeover by elapsed time and a general agent runner are outside this version. Unsupported publication paths remain ineffective rather than emulating successful ownership."

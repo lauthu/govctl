@@ -81,6 +81,11 @@ pub(crate) struct ReleaseArgs {
 
 #[derive(Subcommand)]
 pub(crate) enum Commands {
+    /// Publish requests and exclusive execution claims on canonical main
+    Coord {
+        #[command(subcommand)]
+        command: super::CoordCommand,
+    },
     /// Manage authors, comments and review records attached to governance entities
     Collab {
         #[command(subcommand)]

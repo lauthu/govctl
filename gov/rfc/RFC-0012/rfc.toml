@@ -3,11 +3,12 @@
 [govctl]
 id = "RFC-0012"
 title = "Repository-authoritative multi-agent coordination"
-version = "0.1.0"
-status = "draft"
-phase = "spec"
+version = "0.1.1"
+status = "normative"
+phase = "test"
 owners = ["@govctl-org"]
 created = "2026-11-14"
+updated = "2026-11-15"
 refs = [
     "RFC-0000",
     "RFC-0001",
@@ -16,9 +17,11 @@ refs = [
     "RFC-0010",
     "RFC-0011",
 ]
+signature = "2522f2e5fb3b3cf2ce0eb04ce26d11748fdabfb05fb7aa99a3edd2317026c1f8"
 
 [[sections]]
 title = "Summary"
+clauses = ["clauses/C-SCOPE.toml"]
 
 [[sections]]
 title = "Specification"
@@ -31,7 +34,16 @@ clauses = [
     "clauses/C-RESULT.toml",
     "clauses/C-POLICY.toml",
     "clauses/C-COMPATIBILITY.toml",
+    "clauses/C-CLI.toml",
+    "clauses/C-PROTOCOL.toml",
+    "clauses/C-HISTORY.toml",
 ]
+
+[[changelog]]
+version = "0.1.1"
+date = "2026-11-15"
+notes = "Clarify current code reachability and historical issuer assertions"
+fixed = ["Preserve accepted control history after referenced feature branches disappear while checking reachability for new authority"]
 
 [[changelog]]
 version = "0.1.0"

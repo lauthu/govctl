@@ -1,0 +1,18 @@
+#:schema ../../../schema/clause.schema.json
+
+[govctl]
+id = "C-HISTORY"
+title = "Signed control history and publication integrity"
+kind = "normative"
+status = "active"
+since = "0.1.0"
+
+[content]
+text = """
+Every accepted operation MUST use an existing formatVersion 2, type `execution`, signed collaboration envelope under `gov/collaboration/<kind>/<artifactId>/<eventId>.json`. Its payload MUST contain `protocol: "govctl-coordination-v1"`, the full `operation`, `semanticDigest`, exact `parentCommit`, and `authority` with `id` and policy `revision`. The semantic digest MUST be SHA-256 over the canonical JSON object `{"operation": operation, "issuerKeyId": signature.keyId}`, using the canonical JSON conventions of [[RFC-0011]]. The stored operation MUST preserve every supplied semantic input field; an implementation MUST NOT silently replace its input with different defaults. Publication-parent witness, envelope timestamp and signature MAY differ on a retry; semantic operation identity MUST NOT.
+
+Accepted history MUST follow actual canonical main first-parent commit order, never client timestamps or filename ordering. A control record MUST first enter main in a one-parent commit containing exactly its one new control-record path, with signed `parentCommit` equal to the actual parent. Its source, policy and ownership validity MUST be determined against that predecessor. Existing accepted control records MUST NOT be modified or deleted. Invalid control history or missing policy context MUST fail closed rather than silently dropping an ownership transition. Non-coordination collaboration records MUST retain their interpretation and MUST NOT be promoted to control events.
+
+Publication MUST use ordinary fast-forward semantics without force, local repository hook execution, arbitrary shell execution or protection bypass. Remote hooks and branch protections MUST remain effective. A lost publication race MUST trigger semantic revalidation before any retry; a rebase or merge alone MUST NOT authorize the intent. A retry MAY publish only while the same semantic preconditions remain valid. An ambiguous transport failure MUST reconcile the operation identity against newly observed canonical history before reporting success. If acceptance cannot be established, it MUST report `COORD_PUBLICATION_UNKNOWN` without granting new ownership. The first version MUST reject unsupported PR or merge-queue publication rather than claim it has validated their final update.
+
+Historical code-reference reachability MUST be treated as the trusted issuer's assertion at publication, not as a reconstruction of past remote branch or tag references. Replay MUST retain the fixed immutable commit identity and validate the event signature, publication parent and policy applicable then. A later deletion of a referenced feature branch or tag MUST NOT erase accepted control history or ownership. New authority and effective results MUST still satisfy the current reachability requirements in [[RFC-0012:C-PROTOCOL]]."""

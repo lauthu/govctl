@@ -1,0 +1,20 @@
+#:schema ../../../schema/clause.schema.json
+
+[govctl]
+id = "C-CLI"
+title = "Coordination CLI and capability"
+kind = "normative"
+status = "active"
+since = "0.1.0"
+
+[content]
+text = """
+The first-version CLI MUST expose `govctl coord capabilities`, `govctl coord list --context-file PATH`, and `govctl coord apply --context-file PATH --sign-key-file PATH --stdin`. These commands MUST be independent of the caller's workspace and MUST NOT modify its source, index or branch. They MUST emit JSON on success. Failures MUST exit nonzero with a stable diagnostic marker on stderr.
+
+Capabilities MUST report `protocolVersion: 1`, capability `repository-main-coordination-v1`, actions `publish`, `claim`, `handoff`, `accept`, `release`, `cancel`, `takeover`, `complete`, publication mode `direct-fast-forward`, and `sourceMutation: false`. Capabilities MUST work without a repository or context. Unsupported versions, actions or publication modes MUST fail closed. The first version MUST NOT apply source or code changes, invoke an agent runner, advance artifact lifecycles, or bypass branch protection. A rejected protected-main push MUST NOT be reported as a successful claim or as an automatically created pull request.
+
+`list` MUST return `protocolVersion`, `repoId`, canonical `head`, `authority` with `id` and `revision`, `artifacts` containing canonical artifact `target` objects, `requests`, and `writes`. Each request MUST expose `requestId`, fixed `target`, `requestedOperation`, `description`, `writeTargets`, `status`, `stateEventId`, `generation`, nullable `holder`, nullable `handoff`, nullable `result`, and `stale`. Status MUST be `open`, `claimed`, `handoff`, `completed` or `cancelled`. Each write entry MUST retain `artifactId`, `generation`, nullable `requestId` and nullable `holder`, including generation tombstones after release. Stale source MUST NOT erase a request or its ownership history.
+
+An apply receipt MUST contain `protocolVersion`, `operationId`, `requestId`, `eventId`, `publicationCommit`, observed `head`, `replayed`, `effective`, and the current projected `request`. Exact replay MUST return the original operation's effect classification with the current request projection. `--dry-run` MUST validate without publication and return `effective: false` and `publicationCommit: null`. Ineffective historical evidence MUST return `effective: false`. A receipt MUST NOT imply that an external runtime started.
+
+The stable error markers MUST include `COORD_INVALID_INPUT`, `COORD_INVALID_CONTEXT`, `COORD_UNAUTHORIZED`, `COORD_POLICY_INVALID`, `COORD_HISTORY_INVALID`, `COORD_NOT_FOUND`, `COORD_SOURCE_CHANGED`, `COORD_STATE_CONFLICT`, `COORD_WRITE_CONFLICT`, `COORD_TERMINAL`, `COORD_IDEMPOTENCY_CONFLICT`, `COORD_PUBLISH_REJECTED`, `COORD_PUBLICATION_UNKNOWN`, `COORD_GIT_FAILED`, and `COORD_UNSUPPORTED`."""

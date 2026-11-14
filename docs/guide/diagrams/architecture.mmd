@@ -22,25 +22,25 @@ flowchart TB
     readers --> views
   end
 
-  subgraph future["DRAFT RFC-0012: repository-authoritative coordination"]
-    proposals["External clients propose<br/>requests, claims, handoffs and results"]
-    validation["Validate authority, input revision<br/>and current claim generation"]
+  subgraph shared["RFC-0012 v1: repository-authoritative coordination"]
+    proposals["coord apply: requests, claims,<br/>handoff offers / acceptance and results"]
+    validation["External policy and signed history<br/>Validate input and claim generations"]
     main[("Canonical repository main")]
-    projected["Accepted request and ownership state"]
-    proposals -.-> validation
-    validation -. "conditional fast-forward" .-> main
-    main -. "revalidate after races" .-> validation
-    main -.-> projected
+    projected["coord list: accepted state<br/>No automatic runner or source application"]
+    proposals --> validation
+    validation -- "conditional fast-forward" --> main
+    main -- "revalidate after races" --> validation
+    main -->|signed history and canonical sources| projected
   end
 
   users --> cli
-  views ~~~ proposals
+  cli --> proposals
 
   classDef implemented fill:#eaf3ff,stroke:#3869a4,color:#183453;
   classDef localstate fill:#edf6f0,stroke:#4d7f62,color:#244a33;
   classDef external fill:#f2f3f5,stroke:#727984,color:#303641;
-  classDef planned fill:#fff5df,stroke:#ad7a21,color:#624412,stroke-dasharray:6 4;
+  classDef authority fill:#fff5df,stroke:#ad7a21,color:#624412;
   class cli,safety,artifacts,support,events,readers,views implemented;
   class coordination localstate;
   class users external;
-  class proposals,validation,main,projected planned;
+  class proposals,validation,main,projected authority;

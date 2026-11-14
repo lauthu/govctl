@@ -9,6 +9,9 @@ impl CommandPlan {
         use crate::resource_plan::ToPlan;
 
         match cmd {
+            Commands::Coord { command } => Ok(global(Op::Builtin(BuiltinOp::Coord {
+                command: command.clone(),
+            }))),
             Commands::Collab { command } => Ok(global(Op::Builtin(BuiltinOp::Collab {
                 command: command.clone(),
             }))),
