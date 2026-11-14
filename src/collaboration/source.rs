@@ -1,4 +1,4 @@
-//! Exact source manifests, compatible with Lattice v1 ([[RFC-0011:C-TARGET]]).
+//! Exact source manifests, compatible with protocol v1 ([[RFC-0011:C-TARGET]]).
 use super::{Target, invalid, sha256};
 use crate::config::Config;
 use crate::diagnostic::DiagnosticResult;

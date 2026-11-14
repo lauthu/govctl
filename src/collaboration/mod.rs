@@ -253,7 +253,20 @@ pub(crate) fn execute(
             };
             let mut views = Vec::new();
             let head = git(config, &["rev-parse", "HEAD"]);
-            let clean = git(config, &["status", "--porcelain"]).is_some_and(|s| s.is_empty());
+            // [[RFC-0011:C-TARGET]]: attached records cannot invalidate the
+            // revision they review. Keep every other tracked/untracked change.
+            let clean = git(
+                config,
+                &[
+                    "status",
+                    "--porcelain=v1",
+                    "--untracked-files=all",
+                    "--",
+                    ".",
+                    ":(exclude)gov/collaboration/**",
+                ],
+            )
+            .is_some_and(|s| s.is_empty());
             for source in sources {
                 let history = records::history(config, &source.target, &keys)?;
                 views.push(projection::view(source, history, head.as_deref(), clean));

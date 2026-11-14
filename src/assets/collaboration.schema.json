@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Attached governance collaboration event",
-  "description": "RFC-0011 native v2 and byte-preserved Lattice v1 records. Integrity, references and explicit signer trust are validated by govctl.",
+  "description": "RFC-0011 native v2 and byte-preserved legacy v1 records. Integrity, references and explicit signer trust are validated by govctl.",
   "type": "object",
   "additionalProperties": false,
   "required": [

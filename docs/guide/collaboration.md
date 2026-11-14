@@ -2,8 +2,10 @@
 
 RFCs, ADRs, and Work Items can carry explicit creator attribution and attached
 collaboration history. Comments and reviews belong to the artifact; they are not
-additional task types. Lattice can schedule agents and manage credentials while
-govctl keeps portable records in the repository.
+additional task types. govctl keeps portable records in the repository and
+provides a standalone CLI and a machine-readable protocol. External clients can
+schedule agents, authenticate participants and manage credentials; govctl does
+not depend on a particular orchestration product.
 
 ## Attribute a creation or edit
 
@@ -11,10 +13,10 @@ An actor file identifies the person or agent making a change:
 
 ```json
 {
-  "subjectId": "agent:dsh",
+  "subjectId": "agent:implementer-1",
   "kind": "agent",
-  "agentId": "dsh",
-  "name": "DSH",
+  "agentId": "implementer-1",
+  "name": "Implementation Agent",
   "role": "implementer"
 }
 ```
@@ -92,7 +94,11 @@ authorship for that revision has been confirmed. A signed `authorship` payload
 contains `authors` and is confirmed when issued with an owner/admin role or an
 automatic attribution claim from a trusted issuer. A newer unsigned contributor
 declaration prevents incomplete confirmation from silently authorizing review.
-Lattice additionally checks current participant membership and permissions.
+A trusted key acts as an issuer authority for the identities and roles it
+asserts; govctl does not independently authenticate those participants. Clients
+remain responsible for current membership, permission checks and signer trust
+policy. Supplying a trusted key does not establish a per-Agent credential or a
+distributed authorization service.
 
 Changing source makes previous approvals stale. Unresolved trusted change
 requests continue blocking until explicitly resolved. Code reviews bind to a
@@ -116,7 +122,7 @@ review to a previously captured target. A changed target fails unless
 `collab capabilities -o json` advertises protocol version 1. Clients may append
 an existing signed envelope through `collab append ID --repo-id owner/repo
 --stdin`. The first append retains the supplied bytes, and replay retains the
-original stored bytes. Existing Lattice version 1 signatures and event IDs
+original stored bytes. Existing format version 1 signatures and event IDs
 remain intact; native version 2 also permits `signature: null`. No migration or
 implicit re-signing of historical files is needed.
 

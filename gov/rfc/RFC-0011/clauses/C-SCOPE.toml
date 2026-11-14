@@ -8,4 +8,4 @@ status = "active"
 since = "0.1.0"
 
 [content]
-text = "RFC, ADR and Work Item MUST support native creator attribution and attached collaboration history. Comments, review decisions, authorship confirmations and their resolution relationships are attached records, not new governed task artifacts. Runtime scheduling, model credentials, participant authentication and process monitoring remain responsibilities of clients such as Lattice. This RFC extends the artifact definitions in RFC-0000 and the command architecture in RFC-0002."
+text = "RFC, ADR and Work Item MUST support native creator attribution and attached collaboration history. Comments, review decisions, authorship confirmations and their resolution relationships are attached records, not new governed task artifacts. Runtime scheduling, model credentials, participant authentication and process monitoring remain responsibilities of external clients. govctl MUST NOT require a specific orchestration client to read, append or validate these records. This RFC extends the artifact definitions in RFC-0000 and the command architecture in RFC-0002."

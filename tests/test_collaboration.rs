@@ -306,6 +306,116 @@ fn approvals_require_complete_authors_independence_and_current_revision() {
 }
 
 #[test]
+fn code_approvals_survive_attached_records_but_not_source_changes() {
+    let dir = project();
+    let dir = dir.path();
+    common::git_init_isolated(dir).unwrap();
+    keyfiles(dir);
+    // CLI input/key files are local test context, never repository content.
+    fs::write(
+        dir.join(".git/info/exclude"),
+        "private.pem\npublic.pem\nactor.json\npayload.json\ntarget.json\n",
+    )
+    .unwrap();
+    fs::create_dir(dir.join("src")).unwrap();
+    fs::write(dir.join("src/code.txt"), "reviewed code\n").unwrap();
+    let git = |args: &[&str]| {
+        let result = Command::new("git")
+            .args(args)
+            .current_dir(dir)
+            .output()
+            .unwrap();
+        assert!(
+            result.status.success(),
+            "{}",
+            String::from_utf8_lossy(&result.stderr)
+        );
+        String::from_utf8(result.stdout).unwrap().trim().to_owned()
+    };
+    git(&["add", "."]);
+    git(&[
+        "-c",
+        "user.name=Fixture",
+        "-c",
+        "user.email=fixture@example.invalid",
+        "commit",
+        "-qm",
+        "Reviewed revision",
+    ]);
+    assert!(git(&["status", "--porcelain"]).is_empty());
+    let mut code_target = target(dir);
+    code_target["commit"] = json!(git(&["rev-parse", "HEAD"]));
+    fs::write(
+        dir.join("target.json"),
+        serde_json::to_vec(&code_target).unwrap(),
+    )
+    .unwrap();
+    let add_code = |kind: &str, who: Value, payload: Value, key: &str| {
+        fs::write(dir.join("actor.json"), serde_json::to_vec(&who).unwrap()).unwrap();
+        fs::write(
+            dir.join("payload.json"),
+            serde_json::to_vec(&payload).unwrap(),
+        )
+        .unwrap();
+        success(run(
+            dir,
+            &[
+                "collab",
+                "add",
+                ID,
+                "--repo-id",
+                REPO,
+                "--type",
+                kind,
+                "--actor-file",
+                "actor.json",
+                "--payload-file",
+                "payload.json",
+                "--target-file",
+                "target.json",
+                "--sign-key-file",
+                "private.pem",
+                "--idempotency-key",
+                key,
+            ],
+        ))
+    };
+    add_code(
+        "authorship",
+        actor("human:owner", "owner"),
+        json!({"authors":[actor("agent:writer", "implementer")]}),
+        "code-authors",
+    );
+    add_code(
+        "review",
+        actor("agent:reviewer", "reviewer"),
+        json!({"scope":"code","verdict":"approved","reason":"Inspected this commit"}),
+        "code-review",
+    );
+    assert_eq!(list(dir, true)["reviewState"]["approvedCount"], 1);
+    add(
+        dir,
+        "comment",
+        actor("agent:reviewer", "reviewer"),
+        json!({"body":"An attached comment does not change the reviewed code"}),
+        "code-comment",
+        true,
+    );
+    assert!(!git(&["status", "--porcelain"]).is_empty());
+    assert_eq!(list(dir, true)["reviewState"]["approvedCount"], 1);
+    fs::write(dir.join("src/code.txt"), "unreviewed modification\n").unwrap();
+    assert_eq!(list(dir, true)["reviewState"]["approvedCount"], 0);
+    fs::write(dir.join("src/code.txt"), "reviewed code\n").unwrap();
+    fs::write(dir.join("src/new.txt"), "untracked code\n").unwrap();
+    assert_eq!(list(dir, true)["reviewState"]["approvedCount"], 0);
+    fs::remove_file(dir.join("src/new.txt")).unwrap();
+    assert_eq!(list(dir, true)["reviewState"]["approvedCount"], 1);
+    // Governance outside collaboration remains part of the clean-worktree gate.
+    fs::write(dir.join("gov/unreviewed.toml"), "unreviewed = true\n").unwrap();
+    assert_eq!(list(dir, true)["reviewState"]["approvedCount"], 0);
+}
+
+#[test]
 fn resolutions_require_a_trusted_authorized_actor_and_existing_reference() {
     let dir = project();
     let dir = dir.path();

@@ -76,7 +76,7 @@ pub(crate) enum CollabCommand {
     Target(CollabTargetArgs),
     /// Read attached records, authors and review state
     List(CollabListArgs),
-    /// Render the discussion and review state independently of Lattice
+    /// Render the discussion and review state without an external client
     Show(CollabListArgs),
     /// Validate and append an existing event without changing its identity
     Append(CollabAppendArgs),

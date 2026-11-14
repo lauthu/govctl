@@ -15,7 +15,7 @@ refs = [
 ]
 
 [content]
-description = "Implement RFC-0011 and the associated artifact and command amendments in the personal govctl fork, enabling Lattice integration and byte-preserving legacy compatibility."
+description = "Implement [[RFC-0011]] and the associated artifact and command amendments in native govctl, enabling independent client integration and byte-preserving versioned envelope compatibility."
 
 [[content.acceptance_criteria]]
 text = "Record explicit creators for RFC ADR and Work Item without inferring historical authors"
@@ -33,7 +33,7 @@ status = "done"
 category = "added"
 
 [[content.acceptance_criteria]]
-text = "Preserve existing Lattice event bytes IDs signatures and current review conclusions"
+text = "Preserve existing version 1 event bytes IDs signatures and current review conclusions"
 status = "done"
 category = "fixed"
 
