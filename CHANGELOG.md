@@ -21,6 +21,8 @@ Release entries are curated summaries for readers. Work item traceability remain
 - Preserve idempotent accepted operations and ineffective historical evidence while rejecting stale state, fabricated attempts and ambiguous publication as new authority (WI-2026-11-15-001)
 - Return complete RFC ADR and Work Item inputs from the canonical request source with native rendering and author evidence (WI-2026-11-15-002)
 - Document request snapshot capability and author evidence trust boundaries for external consumers (WI-2026-11-15-002)
+- Return separately identified canonical baseline and published candidate source packages for fixed review requests (WI-2026-11-15-003)
+- Document immutable candidate review inputs and their separation from remote PR state and lifecycle approval (WI-2026-11-15-003)
 
 ### Changed
 
@@ -36,6 +38,7 @@ Release entries are curated summaries for readers. Work item traceability remain
 
 - Validate signed causal history against externally anchored policies and preserve actor, issuer and delegated holder boundaries (WI-2026-11-15-001)
 - Reject stale or unavailable inputs and unsafe paths while isolating caller state and preserving untrusted evidence diagnostics (WI-2026-11-15-002)
+- Reject stale unavailable malformed or unsafe candidate inputs and preserve current-policy document authorship evidence (WI-2026-11-15-003)
 
 ## [0.22.0] - 2026-10-09
 

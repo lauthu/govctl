@@ -11,6 +11,7 @@ use crate::{
 };
 use ed25519_dalek::{VerifyingKey, pkcs8::DecodePublicKey};
 use serde_json::{Value, json};
+use std::collections::BTreeSet;
 
 const RESPONSE_LIMIT: usize = 16 * 1024 * 1024;
 
@@ -50,6 +51,125 @@ pub(super) fn request(context: &Context, request_id: &str) -> DiagnosticResult<V
         ));
     }
     let (body, content) = document(&config, target)?;
+    let evidence = author_evidence(&config, target, context)?;
+    let response = json!({
+        "protocolVersion":1,"repoId":context.repo_id,"head":head,
+        "authority":{"id":context.authority_id,"revision":context.current_policy_revision},
+        "request":request,"target":target,"body":body,"content":content,
+        "authorEvidence":{"createdBy":source.created_by,"authorship":evidence},
+    });
+    bounded_response(response)
+}
+
+/// Keep candidate document identity separate from both main and its Git commit.
+/// [[RFC-0012:C-CANDIDATE-SNAPSHOT]] does not change stored request semantics.
+pub(super) fn candidate(context: &Context, request_id: &str) -> DiagnosticResult<Value> {
+    model::bounded(request_id, 300)?;
+    let mut repo = Repository::open(context)?;
+    let head = repo.fetch()?;
+    let mut state = history::replay(&mut repo, context, &head).map_err(source_error)?;
+    mark_unavailable(&repo, &mut state)?;
+    let request = state.requests.get(request_id).ok_or_else(|| {
+        failure(
+            "COORD_NOT_FOUND",
+            "The request has not been published on canonical main.",
+        )
+    })?;
+    let commit = match request.target.commit.as_deref() {
+        Some(commit)
+            if request.requested_operation == "review" && request.write_targets.is_empty() =>
+        {
+            commit
+        }
+        _ => {
+            return Err(failure(
+                "COORD_UNSUPPORTED",
+                "Candidate snapshots require a read-only review with a fixed code commit.",
+            ));
+        }
+    };
+    if request.stale {
+        return Err(failure(
+            "COORD_SOURCE_CHANGED",
+            "The request's fixed governance or code input is no longer current or available.",
+        ));
+    }
+    let (_baseline_snapshot, baseline_config) = repo.source_snapshot(&head, None)?;
+    let baseline = document_source(&baseline_config, context, &request.target)?;
+    let mut fixed_baseline = request.target.clone();
+    fixed_baseline.commit = None;
+    if baseline.target != fixed_baseline {
+        return Err(failure(
+            "COORD_SOURCE_CHANGED",
+            "Captured baseline does not match the request's fixed input.",
+        ));
+    }
+    let (baseline_body, baseline_content) =
+        document(&baseline_config, &baseline.target).map_err(candidate_source_error)?;
+    let record_path = format!(
+        "gov/collaboration/{}/{}",
+        baseline.target.kind, baseline.target.id
+    );
+    let (_candidate_snapshot, candidate_config) =
+        repo.source_snapshot(commit, Some(&record_path))?;
+    let candidate = document_source(&candidate_config, context, &baseline.target)?;
+    let (body, content) =
+        document(&candidate_config, &candidate.target).map_err(candidate_source_error)?;
+    // Authorship is attached before the candidate commit is created: its native
+    // document target has a null commit, not the request's baseline or code SHA.
+    let evidence = author_evidence(&candidate_config, &candidate.target, context)?;
+    bounded_response(json!({
+        "protocolVersion":1,"repoId":context.repo_id,"head":head,
+        "authority":{"id":context.authority_id,"revision":context.current_policy_revision},
+        "request":request,
+        "baseline":{"target":baseline.target,"body":baseline_body,"content":baseline_content},
+        "candidate":{"commit":commit,"target":candidate.target,"body":body,"content":content,
+            "authorEvidence":{"createdBy":candidate.created_by,"authorship":evidence}},
+    }))
+}
+
+fn document_source(
+    config: &Config,
+    context: &Context,
+    target: &Target,
+) -> DiagnosticResult<source::Source> {
+    let sources = source::sources(config, &context.repo_id).map_err(candidate_source_error)?;
+    let mut identities = BTreeSet::new();
+    if sources
+        .iter()
+        .any(|source| !identities.insert(&source.target.id))
+    {
+        return Err(failure(
+            "COORD_SOURCE_CHANGED",
+            "Duplicate candidate artifact identity.",
+        ));
+    }
+    sources
+        .into_iter()
+        .find(|source| {
+            source.target.repo_id == target.repo_id
+                && source.target.kind == target.kind
+                && source.target.id == target.id
+        })
+        .ok_or_else(|| failure("COORD_SOURCE_CHANGED", "The fixed source is unavailable."))
+}
+
+fn candidate_source_error(error: Diagnostic) -> Diagnostic {
+    if error.message.contains("COORD_") {
+        error
+    } else {
+        failure(
+            "COORD_SOURCE_CHANGED",
+            "A candidate governance source is missing or malformed.",
+        )
+    }
+}
+
+fn author_evidence(
+    config: &Config,
+    target: &Target,
+    context: &Context,
+) -> DiagnosticResult<Vec<records::History>> {
     let policy = &context.policies[&context.current_policy_revision];
     let keys: Vec<VerifyingKey> = policy
         .trusted_issuers
@@ -59,7 +179,7 @@ pub(super) fn request(context: &Context, request_id: &str) -> DiagnosticResult<V
                 .map_err(|_| failure("COORD_POLICY_INVALID", "Invalid issuer public key."))
         })
         .collect::<DiagnosticResult<_>>()?;
-    let evidence: Vec<_> = records::history(&config, target, &keys)?
+    Ok(records::history(config, target, &keys)?
         .into_iter()
         .filter(|entry| match &entry.event {
             // Preserve native diagnostics instead of silently hiding bad evidence.
@@ -70,13 +190,10 @@ pub(super) fn request(context: &Context, request_id: &str) -> DiagnosticResult<V
                         .is_ok_and(|value| value == *target)
             }
         })
-        .collect();
-    let response = json!({
-        "protocolVersion":1,"repoId":context.repo_id,"head":head,
-        "authority":{"id":context.authority_id,"revision":context.current_policy_revision},
-        "request":request,"target":target,"body":body,"content":content,
-        "authorEvidence":{"createdBy":source.created_by,"authorship":evidence},
-    });
+        .collect())
+}
+
+fn bounded_response(response: Value) -> DiagnosticResult<Value> {
     if serde_json::to_vec(&response)
         .map_err(|_| super::invalid_input("Cannot encode request input snapshot."))?
         .len()

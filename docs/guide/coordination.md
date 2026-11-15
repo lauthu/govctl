@@ -20,8 +20,8 @@ govctl coord capabilities
 ```
 
 The response advertises protocol version `1`, capabilities
-`repository-main-coordination-v1` and `request-input-snapshot-v1`, and publication
-mode `direct-fast-forward`.
+`repository-main-coordination-v1`, `request-input-snapshot-v1`, and
+`candidate-input-snapshot-v1`, and publication mode `direct-fast-forward`.
 
 Keep the context and private signing key outside the repository. The context names
 the canonical remote, trusted issuer keys and subject permissions. A subject ID
@@ -160,6 +160,45 @@ the presence of a signature establishes complete authorship or reviewer
 independence. Consumers apply their own authorship policy. Snapshot reading and
 coordination completion never synthesize a native review or make an existing
 approval effective.
+
+## Review an unmerged candidate
+
+For a published read-only `review` request whose `target.commit` fixes an available
+candidate SHA, use:
+
+```bash
+govctl coord candidate-snapshot \
+  --context-file /secure/govctl/context.json \
+  --request-id review-rfc-0002-candidate
+```
+
+The response contains `protocolVersion`, `repoId`, canonical `head`, `authority`,
+the complete current `request`, `baseline`, and `candidate`. `baseline` has
+`target`, `body`, and `content` from canonical main. `candidate` has `commit`,
+`target`, `body`, `content`, and `authorEvidence` from the request's fixed commit.
+Both representations use the complete archival format described above. Their
+document digests and versions may differ; both nested targets have `commit: null`.
+Only `candidate.commit` identifies the candidate's Git revision.
+
+The request still binds the original main document target plus the candidate
+commit. Its baseline must remain current, and the candidate must remain reachable
+from an advertised remote branch or tag. Missing or malformed candidate sources
+fail with `COORD_SOURCE_CHANGED`. A request other than a `review` with empty
+`writeTargets` and a non-null code commit fails with `COORD_UNSUPPORTED`. The
+combined response is limited to 16 MiB and never returns partial content.
+
+Candidate author evidence comes only from that commit, uses current-policy trust,
+and selects records matching the candidate document target **with null commit**.
+This allows authorship to be attached before creating the Git commit. A consumer
+binds its review conclusion to both `candidate.target` and `candidate.commit`.
+
+Clients must separately check that a pull request still names this exact commit,
+that the candidate has the expected base and allowed changes, and that the runner
+still owns the authorized request. A reachable old commit is not proof of the
+current PR head. Replacing the PR head requires a new request rather than rebinding
+the old one. Completion records a result; it neither merges the PR nor approves
+the unchanged main document. The existing `coord snapshot` command continues to
+return main text even when its request includes a code commit.
 
 ## Publish and claim a review request
 
