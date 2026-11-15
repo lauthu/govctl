@@ -18,6 +18,13 @@ pub(crate) enum CoordCommand {
         #[arg(long)]
         request_id: String,
     },
+    /// Read canonical baseline and fixed published candidate inputs for review
+    CandidateSnapshot {
+        #[arg(long)]
+        context_file: PathBuf,
+        #[arg(long)]
+        request_id: String,
+    },
     /// Conditionally publish one signed control operation from JSON stdin
     Apply {
         #[arg(long)]

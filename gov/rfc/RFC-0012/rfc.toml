@@ -3,7 +3,7 @@
 [govctl]
 id = "RFC-0012"
 title = "Repository-authoritative multi-agent coordination"
-version = "0.2.0"
+version = "0.3.0"
 status = "normative"
 phase = "test"
 owners = ["@govctl-org"]
@@ -17,7 +17,7 @@ refs = [
     "RFC-0010",
     "RFC-0011",
 ]
-signature = "5c1c8f0736f994eee2bedebc11fb0204ef6ff428279cf6d22d5df22bee76fba7"
+signature = "d707f861110891d8a1cf3fd48bf6bc7021fe2abcae5bee510dfaaa307c2d658a"
 
 [[sections]]
 title = "Summary"
@@ -38,7 +38,14 @@ clauses = [
     "clauses/C-PROTOCOL.toml",
     "clauses/C-HISTORY.toml",
     "clauses/C-SNAPSHOT.toml",
+    "clauses/C-CANDIDATE-SNAPSHOT.toml",
 ]
+
+[[changelog]]
+version = "0.3.0"
+date = "2026-11-15"
+notes = "Expose immutable candidate review packages"
+added = ["Separate published candidate source and document authorship from its canonical baseline"]
 
 [[changelog]]
 version = "0.2.0"
