@@ -1,0 +1,34 @@
+#:schema ../schema/work.schema.json
+
+[govctl]
+id = "WI-2026-11-15-002"
+title = "Expose canonical request input snapshots"
+status = "done"
+created = "2026-11-15"
+started = "2026-11-15"
+completed = "2026-11-15"
+refs = [
+    "RFC-0012",
+    "RFC-0011",
+]
+
+[content]
+description = "Expose complete canonical request inputs and revision-bound author evidence so external agents can review the exact repository-authoritative source without depending on a caller checkout."
+
+[[content.acceptance_criteria]]
+text = "Return complete RFC ADR and Work Item inputs from the canonical request source with native rendering and author evidence"
+status = "done"
+category = "added"
+
+[[content.acceptance_criteria]]
+text = "Reject stale or unavailable inputs and unsafe paths while isolating caller state and preserving untrusted evidence diagnostics"
+status = "done"
+category = "security"
+
+[[content.acceptance_criteria]]
+text = "Document request snapshot capability and author evidence trust boundaries for external consumers"
+status = "done"
+category = "added"
+
+[verification]
+required_guards = ["GUARD-CARGO-TEST"]

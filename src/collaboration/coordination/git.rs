@@ -267,15 +267,60 @@ impl Repository {
         if let Some(targets) = self.source_cache.get(&trees) {
             return Ok(targets.clone());
         }
+        let (_snapshot, config) = self.source_snapshot(revision, None)?;
+        let mut targets = BTreeMap::new();
+        for source in source::sources(&config, repo_id)? {
+            if targets
+                .insert(source.target.id.clone(), source.target)
+                .is_some()
+            {
+                return Err(failure(
+                    "COORD_HISTORY_INVALID",
+                    "Duplicate canonical artifact identity.",
+                ));
+            }
+        }
+        self.source_cache.insert(trees, targets.clone());
+        Ok(targets)
+    }
+
+    /// Capture only native governance inputs, without checkout filters or config.
+    /// [[RFC-0012:C-SNAPSHOT]] binds every exported byte to the same commit.
+    pub fn source_snapshot(
+        &self,
+        revision: &str,
+        records: Option<&str>,
+    ) -> DiagnosticResult<(TempDir, Config)> {
         let snapshot = tempfile::tempdir().map_err(io_failure)?;
         let gov = snapshot.path().join("gov");
         fs::create_dir(&gov).map_err(io_failure)?;
-        let output = self.run(
-            &[
-                "ls-tree", "-r", "-z", revision, "--", "gov/rfc", "gov/adr", "gov/work",
-            ],
-            None,
-        )?;
+        let mut paths = vec!["gov/rfc", "gov/adr", "gov/work"];
+        if let Some(records) = records {
+            paths.push(records);
+        }
+        // A pathspec below a symlink can otherwise look like an absent directory.
+        for path in &paths {
+            let mut parent = Path::new(path);
+            loop {
+                let parent_text = parent
+                    .to_str()
+                    .ok_or_else(|| failure("COORD_HISTORY_INVALID", "Non-UTF-8 source path."))?;
+                let entry = self.text(&["ls-tree", revision, "--", parent_text], None)?;
+                if !entry.is_empty() && !entry.starts_with("040000 tree ") {
+                    return Err(failure(
+                        "COORD_HISTORY_INVALID",
+                        "Governance source directories must be trees.",
+                    ));
+                }
+                let Some(next) = parent.parent().filter(|p| !p.as_os_str().is_empty()) else {
+                    break;
+                };
+                parent = next;
+            }
+        }
+        let mut args = vec!["ls-tree", "-r", "-z", revision, "--"];
+        args.extend(paths);
+        let output = self.run(&args, None)?;
         if !output.success {
             return Err(failure(
                 "COORD_HISTORY_INVALID",
@@ -329,20 +374,7 @@ impl Repository {
             gov_root: gov,
             ..Config::default()
         };
-        let mut targets = BTreeMap::new();
-        for source in source::sources(&config, repo_id)? {
-            if targets
-                .insert(source.target.id.clone(), source.target)
-                .is_some()
-            {
-                return Err(failure(
-                    "COORD_HISTORY_INVALID",
-                    "Duplicate canonical artifact identity.",
-                ));
-            }
-        }
-        self.source_cache.insert(trees, targets.clone());
-        Ok(targets)
+        Ok((snapshot, config))
     }
 
     pub fn candidate(&self, parent: &str, path: &str, bytes: &[u8]) -> DiagnosticResult<String> {

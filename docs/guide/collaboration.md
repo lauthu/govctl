@@ -13,6 +13,12 @@ control events on canonical `main`; the standalone `collab` commands below remai
 local artifact operations. Coordination does not start an agent or apply source
 changes automatically.
 
+`coord snapshot` reads the complete canonical input for a published request,
+including revision-bound author evidence. Its evidence uses the current external
+coordination policy's issuer keys and stays separate from the standalone trust
+configuration below. A coordination result remains a request outcome; it does
+not create a native `review` record or count as a standalone approval.
+
 ## Attribute a creation or edit
 
 `actor.json` is a caller-supplied input file for attribution, not a registered

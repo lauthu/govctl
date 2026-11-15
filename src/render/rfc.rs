@@ -89,12 +89,14 @@ pub fn render_rfc_with_projection(
 
         // Find and render clauses for this section
         for clause_path in &section.clauses {
-            if let Some(clause) = rfc.clauses.iter().find(|c| {
-                c.path
-                    .file_name()
-                    .and_then(|n| n.to_str())
-                    .is_some_and(|n| clause_path.ends_with(n))
-            }) {
+            // [[RFC-0000:C-RFC-DEF]] binds the complete source path. Distinct
+            // referenced directories can contain the same basename.
+            let referenced = rfc
+                .path
+                .parent()
+                .unwrap_or_else(|| std::path::Path::new(""))
+                .join(clause_path);
+            if let Some(clause) = rfc.clauses.iter().find(|c| c.path == referenced) {
                 render_clause_with_projection(&mut out, &rfc.rfc.rfc_id, clause, projection);
             }
         }

@@ -11,6 +11,13 @@ pub(crate) enum CoordCommand {
         #[arg(long)]
         context_file: PathBuf,
     },
+    /// Read complete current inputs for one canonical request
+    Snapshot {
+        #[arg(long)]
+        context_file: PathBuf,
+        #[arg(long)]
+        request_id: String,
+    },
     /// Conditionally publish one signed control operation from JSON stdin
     Apply {
         #[arg(long)]

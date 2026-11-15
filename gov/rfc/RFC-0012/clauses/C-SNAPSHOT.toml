@@ -1,0 +1,20 @@
+#:schema ../../../schema/clause.schema.json
+
+[govctl]
+id = "C-SNAPSHOT"
+title = "Canonical request input snapshots"
+kind = "normative"
+status = "active"
+since = "0.2.0"
+
+[content]
+text = """
+The CLI MUST expose `govctl coord snapshot --context-file PATH --request-id ID` as a read-only operation independent of the caller's checkout. It MUST require no signing key and MUST use the external context, policy-history validation and canonical-main history rules defined by this RFC. It MUST NOT publish events, acquire ownership, start a runtime, mutate the caller's workspace or execute repository configuration, templates or hooks.
+
+A successful response MUST contain `protocolVersion: 1`, `repoId`, canonical `head`, `authority` with `id` and `revision`, the complete projected `request` defined by [[RFC-0012:C-CLI]], its exact fixed `target`, `body`, `content`, and `authorEvidence`. Every source and attached record in the response MUST come from the same fetched canonical-main commit identified by `head`. The governance source and all fixed write inputs MUST still match the request's bound revisions. A non-null fixed code target MUST remain reachable from fetched advertised branches or tags. A missing request MUST fail with `COORD_NOT_FOUND`; changed, missing or unavailable fixed input MUST fail with `COORD_SOURCE_CHANGED`. A terminal request MAY be read if its input remains current. A snapshot MUST NOT imply that its returned holder or input remains current after the observed commit; callers MUST revalidate ownership and fixed input when publishing results.
+
+`body` MUST contain the complete archival Markdown rendering of the governed artifact. `content` MUST use the same structured artifact representation as the native `show --output json` command; RFC content MUST additionally contain `clauseSources`, an array of complete native Clause representations in section-reference order, including deprecated or superseded clauses. Both representations MUST describe the same source used for the bound content digest. A non-null `target.commit` remains an immutable code reference distinct from `head`; this command MUST NOT claim to return the referenced code checkout. The response MUST NOT omit or truncate content to fit a size limit. The encoded response MUST be limited to 16 MiB; an oversized response MUST fail with `COORD_UNSUPPORTED`. Unsafe paths or malformed governance sources MUST fail closed. Malformed attached records MUST retain their native unverified History diagnostics with null event and error; consumers MUST NOT treat these diagnostics as trusted or complete authorship.
+
+`authorEvidence` MUST contain `createdBy`, the native creator Actor declaration or null, and `authorship`, native [[RFC-0011:C-STORAGE]] History entries for validated `authorship` events whose complete target equals the request target, together with malformed-record diagnostic entries for that artifact. The existing entry fields `eventId`, `event`, `verification` and `provenance` MUST be preserved. A valid signature from an issuer listed in the current external policy MUST be classified as `verification: verified` and `provenance: verified`; other valid signatures MUST remain `unverified` and `unknown-key`, and unsigned declarations MUST remain `unverified` and `declared`. This classification MUST NOT confer coordination permissions, assert complete authorship, establish reviewer independence or make an approval effective. Creator metadata MUST remain a declaration, not authenticated evidence. Historical coordination authorization MUST NOT extend current author-evidence trust after issuer revocation. Consumers remain responsible for authorship and review policy.
+
+The snapshot capability MUST be additive. Existing stored control events, request/result semantics, native collaboration projections and standalone review validity MUST remain unchanged. A coordination completion MUST NOT be synthesized into a native review or approval by this command."""

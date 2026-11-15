@@ -19,8 +19,9 @@ Check support without opening a repository:
 govctl coord capabilities
 ```
 
-The response advertises protocol version `1`, capability
-`repository-main-coordination-v1` and publication mode `direct-fast-forward`.
+The response advertises protocol version `1`, capabilities
+`repository-main-coordination-v1` and `request-input-snapshot-v1`, and publication
+mode `direct-fast-forward`.
 
 Keep the context and private signing key outside the repository. The context names
 the canonical remote, trusted issuer keys and subject permissions. A subject ID
@@ -113,6 +114,52 @@ Each later action supplies the exact `expectedState`, `expectedGeneration` and
 `expectedWrites` values it observed. A state or write conflict means the intent
 needs review against a fresh snapshot; merely editing the expected values does
 not establish that the same action is still appropriate.
+
+## Read the exact request input
+
+After claiming a request, an external runner can obtain the complete governance
+document without using its local checkout:
+
+```bash
+govctl coord snapshot \
+  --context-file /secure/govctl/context.json \
+  --request-id review-rfc-0002
+```
+
+This read-only command needs no signing key. Its response contains `repoId`,
+`head`, `authority`, the complete current `request`, its fixed `target`, `body`,
+`content`, and `authorEvidence`. All source and attached records come from the
+same canonical main commit. `body` is archival Markdown, including deprecated
+and superseded clauses. `content` uses the native `show --output json` artifact
+representation; RFCs also include `clauseSources`, complete native Clause objects
+in section order. `target.commit` remains a distinct optional code reference; the
+package does not include a code checkout.
+
+A changed or missing source, stale captured write input, or unavailable code
+target fails with `COORD_SOURCE_CHANGED`. An unknown request fails with
+`COORD_NOT_FOUND`. Packages larger than 16 MiB fail with `COORD_UNSUPPORTED`,
+without partial content. The command can also read terminal requests whose
+inputs are still current. It does not acquire a claim, launch an agent, or keep a
+claim current while a runner works. Consumers must compare the returned holder,
+generation, claim and session with their accepted execution and revalidate when
+publishing a result.
+
+`authorEvidence.createdBy` is the optional creator declaration. It is not an
+authenticated identity assertion. `authorEvidence.authorship` contains native
+collaboration History entries for the exact request target. A `verified` entry
+has a valid signature from an issuer listed in the **current** context policy;
+an unsigned declaration remains `unverified` / `declared`, and a valid signature
+from another issuer remains `unverified` / `unknown-key`. Removing an issuer from
+current trust does not erase accepted coordination history, but it does remove
+current trust from that issuer's author evidence.
+
+Malformed attached records retain their native diagnostic entries with null
+`event`, an `error`, and `unverified` status. Valid records for other revisions and
+other record types are omitted. Neither those diagnostics, a display name, nor
+the presence of a signature establishes complete authorship or reviewer
+independence. Consumers apply their own authorship policy. Snapshot reading and
+coordination completion never synthesize a native review or make an existing
+approval effective.
 
 ## Publish and claim a review request
 
