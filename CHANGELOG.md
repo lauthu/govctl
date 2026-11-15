@@ -19,6 +19,8 @@ Release entries are curated summaries for readers. Work item traceability remain
 - Enforce one execution holder per request and exclusive artifact write scopes across independent clones (WI-2026-11-15-001)
 - Support handoff offers and acceptance, release, cancellation, explicit takeover and fenced completion with immutable outcome references (WI-2026-11-15-001)
 - Preserve idempotent accepted operations and ineffective historical evidence while rejecting stale state, fabricated attempts and ambiguous publication as new authority (WI-2026-11-15-001)
+- Return complete RFC ADR and Work Item inputs from the canonical request source with native rendering and author evidence (WI-2026-11-15-002)
+- Document request snapshot capability and author evidence trust boundaries for external consumers (WI-2026-11-15-002)
 
 ### Changed
 
@@ -33,6 +35,7 @@ Release entries are curated summaries for readers. Work item traceability remain
 ### Security
 
 - Validate signed causal history against externally anchored policies and preserve actor, issuer and delegated holder boundaries (WI-2026-11-15-001)
+- Reject stale or unavailable inputs and unsafe paths while isolating caller state and preserving untrusted evidence diagnostics (WI-2026-11-15-002)
 
 ## [0.22.0] - 2026-10-09
 
