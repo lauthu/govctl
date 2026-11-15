@@ -68,6 +68,12 @@ commands publish signed control events and derive request and ownership state
 from canonical `main`. See [Repository Coordination](coordination.md) for setup,
 JSON examples and first-version limits.
 
+External runners can read a request's complete governance input with `coord
+snapshot`. The document, clauses, author evidence and current ownership come
+from one canonical main commit and must match the request's fixed source. This
+read-only package does not start execution, include a code checkout or convert a
+coordination outcome into a native review approval.
+
 The configured canonical repository's `main` becomes the shared authority for
 requests and execution ownership. Each clone can reconstruct accepted state from
 the same history and explicit policy context. A local event or an unmerged pull

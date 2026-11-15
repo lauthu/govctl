@@ -3,7 +3,7 @@
 [govctl]
 id = "RFC-0012"
 title = "Repository-authoritative multi-agent coordination"
-version = "0.1.1"
+version = "0.2.0"
 status = "normative"
 phase = "test"
 owners = ["@govctl-org"]
@@ -17,7 +17,7 @@ refs = [
     "RFC-0010",
     "RFC-0011",
 ]
-signature = "2522f2e5fb3b3cf2ce0eb04ce26d11748fdabfb05fb7aa99a3edd2317026c1f8"
+signature = "5c1c8f0736f994eee2bedebc11fb0204ef6ff428279cf6d22d5df22bee76fba7"
 
 [[sections]]
 title = "Summary"
@@ -37,7 +37,14 @@ clauses = [
     "clauses/C-CLI.toml",
     "clauses/C-PROTOCOL.toml",
     "clauses/C-HISTORY.toml",
+    "clauses/C-SNAPSHOT.toml",
 ]
+
+[[changelog]]
+version = "0.2.0"
+date = "2026-11-15"
+notes = "Add canonical request input snapshots"
+added = ["Expose complete canonical request sources and revision-bound author evidence without changing control publication"]
 
 [[changelog]]
 version = "0.1.1"

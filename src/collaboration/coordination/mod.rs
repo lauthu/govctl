@@ -3,6 +3,7 @@ mod git;
 mod history;
 mod model;
 mod policy;
+mod snapshot;
 mod state;
 
 use crate::{
@@ -56,7 +57,7 @@ pub(crate) fn execute(command: CoordCommand, op: WriteOp) -> DiagnosticResult<()
 fn execute_inner(command: CoordCommand, op: WriteOp) -> DiagnosticResult<()> {
     match command {
         CoordCommand::Capabilities => print(&json!({
-            "protocolVersion":1,"capabilities":["repository-main-coordination-v1"],
+            "protocolVersion":1,"capabilities":["repository-main-coordination-v1","request-input-snapshot-v1"],
             "actions":model::ACTIONS,"publicationModes":["direct-fast-forward"],"sourceMutation":false,
         })),
         CoordCommand::List { context_file } => {
@@ -67,6 +68,14 @@ fn execute_inner(command: CoordCommand, op: WriteOp) -> DiagnosticResult<()> {
             mark_unavailable(&repo, &mut state)?;
             let sources = repo.targets(&head, &context.repo_id)?;
             print(&snapshot(&context, &head, &state, &sources))
+        }
+        CoordCommand::Snapshot {
+            context_file,
+            request_id,
+        } => {
+            let context = Context::load(&context_file)?;
+            let value = snapshot::request(&context, &request_id)?;
+            print(&value)
         }
         CoordCommand::Apply {
             context_file,
