@@ -1,0 +1,46 @@
+#:schema ../schema/work.schema.json
+
+[govctl]
+id = "WI-2026-11-25-002"
+title = "Configure fork prerelease distribution"
+status = "done"
+created = "2026-11-25"
+started = "2026-11-25"
+completed = "2026-11-25"
+refs = [
+    "RFC-0002:C-SELF-UPDATE",
+    "RFC-0002:C-PRE-1-RELEASE-TARGET-COMPATIBILITY",
+    "ADR-0041",
+    "ADR-0060",
+]
+
+[content]
+description = "Prepare an independent lauthu/govctl prerelease by assigning a distinct semver prerelease, pointing release and self-update metadata at the fork, documenting direct prebuilt installation, and marking prerelease tags automatically. Scope is distribution configuration only; it does not alter governance semantics or upstream installation channels."
+
+[[content.acceptance_criteria]]
+text = "Fork release metadata and self-update configuration identify lauthu/govctl and an independent prerelease version"
+status = "done"
+category = "added"
+
+[[content.acceptance_criteria]]
+text = "Installation documentation directs users to fork prebuilt archives for every supported OS and architecture while retaining a source-build option"
+status = "done"
+category = "added"
+
+[[content.acceptance_criteria]]
+text = "Prerelease tags are marked as GitHub prereleases with native artifact smoke validation"
+status = "done"
+category = "added"
+
+[[content.acceptance_criteria]]
+text = "Focused and full tests plus formatting and governance checks pass"
+status = "done"
+category = "chore"
+
+[[content.acceptance_criteria]]
+text = "First fork release self-update checks treat an empty release list as up to date"
+status = "done"
+category = "fixed"
+
+[verification]
+required_guards = ["GUARD-CARGO-TEST"]

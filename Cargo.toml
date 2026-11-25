@@ -1,12 +1,12 @@
 [package]
 name = "govctl"
-version = "0.22.0"
+version = "0.23.0-lauthu.1"
 edition = "2024"
 rust-version = "1.96"
 description = "Project governance CLI for RFC, ADR, and Work Item management"
 license = "MIT"
-repository = "https://github.com/govctl-org/govctl"
-homepage = "https://github.com/govctl-org/govctl"
+repository = "https://github.com/lauthu/govctl"
+homepage = "https://github.com/lauthu/govctl"
 documentation = "https://docs.rs/govctl"
 readme = "README.md"
 keywords = ["governance", "rfc", "cli", "adr", "specification"]

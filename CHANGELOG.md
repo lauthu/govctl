@@ -10,6 +10,8 @@ Release entries are curated summaries for readers. Work item traceability remain
 
 ## [Unreleased]
 
+## [0.23.0-lauthu.1] - 2026-11-25
+
 ### Added
 
 - Record explicit creators for RFC ADR and Work Item without inferring historical authors (WI-2026-11-13-001)
@@ -23,6 +25,9 @@ Release entries are curated summaries for readers. Work item traceability remain
 - Document request snapshot capability and author evidence trust boundaries for external consumers (WI-2026-11-15-002)
 - Return separately identified canonical baseline and published candidate source packages for fixed review requests (WI-2026-11-15-003)
 - Document immutable candidate review inputs and their separation from remote PR state and lifecycle approval (WI-2026-11-15-003)
+- Fork release metadata and self-update configuration identify lauthu/govctl and an independent prerelease version (WI-2026-11-25-002)
+- Installation documentation directs users to fork prebuilt archives for every supported OS and architecture while retaining a source-build option (WI-2026-11-25-002)
+- Prerelease tags are marked as GitHub prereleases with native artifact smoke validation (WI-2026-11-25-002)
 
 ### Changed
 
@@ -40,6 +45,7 @@ Release entries are curated summaries for readers. Work item traceability remain
 - User-facing drive-letter, UNC, and project-relative paths plus CLI help command names remain consistent across Windows and Unix (WI-2026-11-25-001)
 - Windows lock contention retries for gov-root and registry locks until the configured deadline instead of failing immediately (WI-2026-11-25-001)
 - Claim, audit, and presence fixtures serialize Windows workspace paths as valid TOML and compare normalized paths (WI-2026-11-25-001)
+- First fork release self-update checks treat an empty release list as up to date (WI-2026-11-25-002)
 
 ### Security
 
