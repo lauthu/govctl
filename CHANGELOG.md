@@ -38,6 +38,8 @@ Release entries are curated summaries for readers. Work item traceability remain
 - User-facing drive-letter, UNC, and project-relative paths plus CLI help command names remain consistent across Windows and Unix (WI-2026-11-25-001)
 - Windows lock contention retries for gov-root and registry locks until the configured deadline instead of failing immediately (WI-2026-11-25-001)
 - Claim, audit, and presence fixtures serialize Windows workspace paths as valid TOML and compare normalized paths (WI-2026-11-25-001)
+- search returns results for loadable artifacts when another cataloged artifact fails to load, and reports the skipped artifact's load diagnostic (WI-2026-11-17-001)
+- an artifact that was indexed while valid and then stops loading is removed from the search index instead of matching on stale content (WI-2026-11-17-001)
 
 ### Security
 
