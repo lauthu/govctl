@@ -14,6 +14,38 @@ pub fn named_snapshot_name(prefix: &str, name: &str) -> String {
     format!("{prefix}__{name}")
 }
 
+pub fn normalized_display_path(path: &Path) -> String {
+    let path = path.to_string_lossy();
+    #[cfg(windows)]
+    {
+        if let Some(path) = path.strip_prefix(r"\\?\UNC\") {
+            return format!("//{path}").replace('\\', "/");
+        }
+        if let Some(path) = path.strip_prefix(r"\\?\")
+            && path.as_bytes().get(1) == Some(&b':')
+        {
+            return path.replace('\\', "/");
+        }
+        path.replace('\\', "/")
+    }
+    #[cfg(not(windows))]
+    {
+        path.into_owned()
+    }
+}
+
+pub fn normalized_toml_path(
+    record: &str,
+    field: &str,
+) -> Result<String, Box<dyn std::error::Error>> {
+    let record = toml::from_str::<toml::Value>(record)?;
+    let path = record
+        .get(field)
+        .and_then(toml::Value::as_str)
+        .ok_or("record path missing")?;
+    Ok(normalized_display_path(Path::new(path)))
+}
+
 /// Normalize output for stable snapshots:
 /// - Replace temp directory paths with `<TEMPDIR>`
 /// - Replace today's date with `<DATE>`
@@ -25,6 +57,11 @@ pub fn normalize_output(output: &str, dir: &Path, date: &str) -> Result<String, 
     let dir_str = dir.display().to_string();
     let mut normalized = output.replace(&canonical_str, "<TEMPDIR>");
     normalized = normalized.replace(&dir_str, "<TEMPDIR>");
+    #[cfg(windows)]
+    {
+        normalized = normalized.replace(&canonical_str.replace('\\', "/"), "<TEMPDIR>");
+        normalized = normalized.replace(&dir_str.replace('\\', "/"), "<TEMPDIR>");
+    }
     normalized = normalized.replace(date, "<DATE>");
 
     // Replace work item IDs

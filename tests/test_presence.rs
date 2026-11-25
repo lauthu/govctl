@@ -120,11 +120,14 @@ fn write_presence(
 ) -> Result<(), Box<dyn std::error::Error>> {
     let presence = registry_dir(main)?.join("presence");
     std::fs::create_dir_all(&presence)?;
+    let record = presence.join(format!("{id}.toml"));
+    let id = toml::Value::String(id.to_string());
+    let title = toml::Value::String(title.to_string());
+    let workspace = toml::Value::String(workspace.display().to_string());
     std::fs::write(
-        presence.join(format!("{id}.toml")),
+        record,
         format!(
-            "id = \"{id}\"\ntitle = \"{title}\"\nworkspace = \"{}\"\nlast_activity = {last_activity}\n",
-            workspace.display()
+            "id = {id}\ntitle = {title}\nworkspace = {workspace}\nlast_activity = {last_activity}\n"
         ),
     )?;
     Ok(())
@@ -167,8 +170,9 @@ fn activation_registers_presence_visible_from_other_workspaces() -> TestResult {
             .join(format!("{work_id}.toml")),
     )?;
     let secondary_root = std::fs::canonicalize(&secondary)?;
-    assert!(
-        record.contains(&secondary_root.display().to_string()),
+    assert_eq!(
+        common::normalized_toml_path(&record, "workspace")?,
+        common::normalized_display_path(&secondary_root),
         "presence record must name the owning workspace: {record}"
     );
 
@@ -188,7 +192,7 @@ fn activation_registers_presence_visible_from_other_workspaces() -> TestResult {
         "overlay must name the title: {out}"
     );
     assert!(
-        out.contains(&secondary_root.display().to_string()),
+        out.contains(&common::normalized_display_path(&secondary_root)),
         "overlay must name the owning workspace: {out}"
     );
 
@@ -567,16 +571,21 @@ fn status_shows_local_state_locations_shared_across_worktrees() -> TestResult {
     let main_root = std::fs::canonicalize(main.path())?;
     assert_eq!(
         local_state_value(&main_out, "workspace"),
-        Some(format!("{}/", main_root.join(".govctl").display())),
+        Some(format!(
+            "{}/",
+            common::normalized_display_path(&main_root.join(".govctl"))
+        )),
         "status: {main_out}"
     );
     assert_eq!(
         local_state_value(&main_out, "lock"),
-        Some(main_root.join(".govctl/gov.lock").display().to_string()),
+        Some(common::normalized_display_path(
+            &main_root.join(".govctl/gov.lock"),
+        )),
         "status: {main_out}"
     );
     let registry = std::fs::canonicalize(registry_dir(main.path())?)?;
-    let expected_registry = Some(format!("{}/", registry.display()));
+    let expected_registry = Some(format!("{}/", common::normalized_display_path(&registry)));
     assert_eq!(
         local_state_value(&main_out, "registry"),
         expected_registry,

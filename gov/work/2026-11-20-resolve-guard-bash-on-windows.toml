@@ -1,0 +1,39 @@
+#:schema ../schema/work.schema.json
+
+[govctl]
+id = "WI-2026-11-20-001"
+title = "Resolve guard bash on Windows"
+status = "done"
+created = "2026-11-20"
+started = "2026-11-20"
+completed = "2026-11-25"
+refs = [
+    "RFC-0000:C-GUARD-DEF",
+    "ADR-0064",
+]
+
+[content]
+description = "Make Verification Guard execution start reliably on Windows by resolving Bash through the invoking process environment rather than requiring a Unix-only absolute path. Scope is limited to interpreter selection and focused regression coverage; guard commands remain non-login and non-interactive with unchanged environment inheritance."
+
+[[content.acceptance_criteria]]
+text = "Windows guard commands start through Bash resolved from the invoking process PATH instead of failing on a Unix absolute path"
+status = "done"
+category = "fixed"
+
+[[content.acceptance_criteria]]
+text = "Unix guard commands retain their existing absolute Bash path and non-login command arguments"
+status = "done"
+category = "fixed"
+
+[[content.acceptance_criteria]]
+text = "Focused regression coverage verifies both platform interpreter choices and non-login command construction"
+status = "done"
+category = "chore"
+
+[[content.acceptance_criteria]]
+text = "A Windows release binary successfully executes a real governed project guard"
+status = "done"
+category = "chore"
+
+[verification]
+required_guards = ["GUARD-CARGO-TEST"]

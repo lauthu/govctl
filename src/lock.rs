@@ -19,6 +19,12 @@ pub(crate) const LOCK_FILE_NAME: &str = "gov.lock";
 
 /// Backoff between try_lock attempts.
 const POLL_INTERVAL_MS: u64 = 100;
+const WINDOWS_ERROR_LOCK_VIOLATION: i32 = 33;
+
+pub(crate) fn is_lock_contention(error: &io::Error) -> bool {
+    error.kind() == io::ErrorKind::WouldBlock
+        || (cfg!(windows) && error.raw_os_error() == Some(WINDOWS_ERROR_LOCK_VIOLATION))
+}
 
 /// Path of the gov-root write lock: one lock per governed project, kept in
 /// workspace-local state rather than under `gov/` — [[ADR-0065]].
@@ -80,7 +86,7 @@ pub fn acquire_gov_lock(config: &Config) -> DiagnosticResult<GovLockGuard> {
             Ok(()) => {
                 return Ok(GovLockGuard { _file: file });
             }
-            Err(e) if e.kind() == io::ErrorKind::WouldBlock => {
+            Err(e) if is_lock_contention(&e) => {
                 if Instant::now() >= deadline {
                     return Err(Diagnostic::new(
                         DiagnosticCode::E0503LockTimeout,
@@ -116,5 +122,23 @@ mod tests {
             gov_lock_path(&config),
             PathBuf::from("/project/.govctl/gov.lock")
         );
+    }
+
+    #[test]
+    fn would_block_is_lock_contention() {
+        assert!(is_lock_contention(&io::Error::from(
+            io::ErrorKind::WouldBlock
+        )));
+        assert!(!is_lock_contention(&io::Error::from(
+            io::ErrorKind::NotFound
+        )));
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn windows_lock_violation_is_lock_contention() {
+        assert!(is_lock_contention(&io::Error::from_raw_os_error(
+            WINDOWS_ERROR_LOCK_VIOLATION
+        )));
     }
 }

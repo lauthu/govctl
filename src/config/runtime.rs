@@ -232,11 +232,16 @@ impl Config {
         self.gov_root.join("releases.toml")
     }
 
-    /// Path for user-facing display: relative to project root when under it.
+    /// Path for user-facing display: relative to project root when under it,
+    /// with portable separators.
     pub fn display_path(&self, path: &Path) -> PathBuf {
-        path.strip_prefix(self.project_root())
+        let display = path
+            .strip_prefix(self.project_root())
             .map(PathBuf::from)
-            .unwrap_or_else(|_| path.to_path_buf())
+            .unwrap_or_else(|_| path.to_path_buf());
+        #[cfg(windows)]
+        let display = PathBuf::from(crate::path_display::normalize(&display));
+        display
     }
 }
 

@@ -602,7 +602,12 @@ fn source_changes_while_stdin_is_pending_cannot_publish_a_current_review() {
         .unwrap();
     loop {
         match fs2::FileExt::try_lock_exclusive(&lock) {
-            Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => break,
+            Err(error)
+                if error.kind() == std::io::ErrorKind::WouldBlock
+                    || (cfg!(windows) && error.raw_os_error() == Some(33)) =>
+            {
+                break;
+            }
             Ok(()) => {
                 fs2::FileExt::unlock(&lock).unwrap();
             }

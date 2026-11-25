@@ -162,14 +162,14 @@ impl StatusPrinter {
                     "  {} {} ({})",
                     presence.id.cyan().bold(),
                     presence.title,
-                    presence.workspace.display()
+                    crate::path_display::normalize(&presence.workspace)
                 );
             } else {
                 println!(
                     "  {} {} ({})",
                     presence.id,
                     presence.title,
-                    presence.workspace.display()
+                    crate::path_display::normalize(&presence.workspace)
                 );
             }
         }
@@ -180,10 +180,15 @@ impl StatusPrinter {
     /// [[RFC-0010:C-REGISTRY]].
     fn local_state(&self, workspace_dir: &Path, lock: &Path, registry: &RegistryLocation) {
         self.section_header("Local State");
-        self.location_line("workspace", &format!("{}/", workspace_dir.display()));
-        self.location_line("lock", &lock.display().to_string());
+        self.location_line(
+            "workspace",
+            &format!("{}/", crate::path_display::normalize(workspace_dir)),
+        );
+        self.location_line("lock", &crate::path_display::normalize(lock));
         let registry = match registry {
-            RegistryLocation::At(path) => format!("{}/", path.display()),
+            RegistryLocation::At(path) => {
+                format!("{}/", crate::path_display::normalize(path))
+            }
             RegistryLocation::NotApplicable => "not applicable (no version control)".to_string(),
             RegistryLocation::Unavailable(reason) => format!("unavailable ({reason})"),
         };

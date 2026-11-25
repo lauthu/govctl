@@ -25,7 +25,8 @@ pub use fixtures::{
 };
 #[allow(unused_imports)]
 pub use snapshots::{
-    current_test_snapshot_name, named_snapshot_name, normalize_output, snapshot_path,
+    current_test_snapshot_name, named_snapshot_name, normalize_output, normalized_display_path,
+    normalized_toml_path, snapshot_path,
 };
 
 pub type TestResult = Result<(), Box<dyn std::error::Error>>;

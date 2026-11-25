@@ -1,0 +1,46 @@
+#:schema ../schema/work.schema.json
+
+[govctl]
+id = "WI-2026-11-25-001"
+title = "Complete native Windows compatibility"
+status = "done"
+created = "2026-11-25"
+started = "2026-11-25"
+completed = "2026-11-25"
+refs = [
+    "RFC-0002",
+    "RFC-0004:C-FAILURE-BEHAVIOUR",
+    "RFC-0010:C-ARTIFACT-CLAIM",
+    "RFC-0011:C-ACCEPTANCE",
+]
+
+[content]
+description = "Complete native Windows support by keeping CLI output contracts stable, treating Windows lock contention as retryable within configured bounds, and correcting platform-sensitive coordination fixtures. Scope covers defects exposed by the native Windows test suite and continuous Windows verification; it does not change governance semantics."
+
+[[content.acceptance_criteria]]
+text = "User-facing drive-letter, UNC, and project-relative paths plus CLI help command names remain consistent across Windows and Unix"
+status = "done"
+category = "fixed"
+
+[[content.acceptance_criteria]]
+text = "Windows lock contention retries for gov-root and registry locks until the configured deadline instead of failing immediately"
+status = "done"
+category = "fixed"
+
+[[content.acceptance_criteria]]
+text = "Claim, audit, and presence fixtures serialize Windows workspace paths as valid TOML and compare normalized paths"
+status = "done"
+category = "fixed"
+
+[[content.acceptance_criteria]]
+text = "The native Windows full test suite passes without accepting snapshot rewrites"
+status = "done"
+category = "chore"
+
+[[content.acceptance_criteria]]
+text = "Windows CI executes the full all-features test suite and release build"
+status = "done"
+category = "chore"
+
+[verification]
+required_guards = ["GUARD-CARGO-TEST"]

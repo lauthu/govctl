@@ -25,6 +25,12 @@ pub struct GuardRunResult {
     pub output: String,
 }
 
+fn guard_shell(command_text: &str, windows: bool) -> Command {
+    let mut command = Command::new(if windows { "bash" } else { "/bin/bash" });
+    command.args(["-c", command_text]);
+    command
+}
+
 pub fn run_guard(config: &Config, guard: &GuardEntry) -> Result<GuardRunResult, Diagnostic> {
     let project_root = config
         .gov_root
@@ -42,9 +48,8 @@ pub fn run_guard(config: &Config, guard: &GuardEntry) -> Result<GuardRunResult, 
 
     // Non-login shell: inherit the caller's environment unchanged instead of
     // re-sourcing profile files [[RFC-0000:C-GUARD-DEF]], [[ADR-0064]].
-    let mut command = Command::new("/bin/bash");
+    let mut command = guard_shell(&guard.spec.check.command, cfg!(windows));
     command
-        .args(["-c", &guard.spec.check.command])
         .current_dir(project_root)
         .stdout(stdout_capture.stdio(guard, "stdout")?)
         .stderr(stderr_capture.stdio(guard, "stderr")?);
@@ -145,4 +150,22 @@ pub fn run_guard(config: &Config, guard: &GuardEntry) -> Result<GuardRunResult, 
         primary_shell_running_at_timeout,
         output: combined_output,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn guard_shell_uses_platform_bash_without_login_arguments() {
+        for (windows, program) in [(false, "/bin/bash"), (true, "bash")] {
+            let command = guard_shell("printf ok", windows);
+            assert_eq!(command.get_program(), program);
+            let arguments = command
+                .get_args()
+                .map(|argument| argument.to_string_lossy().into_owned())
+                .collect::<Vec<_>>();
+            assert_eq!(arguments, ["-c", "printf ok"]);
+        }
+    }
 }
