@@ -59,8 +59,8 @@ pub fn normalize_output(output: &str, dir: &Path, date: &str) -> Result<String, 
     normalized = normalized.replace(&dir_str, "<TEMPDIR>");
     #[cfg(windows)]
     {
-        normalized = normalized.replace(&canonical_str.replace('\\', "/"), "<TEMPDIR>");
-        normalized = normalized.replace(&dir_str.replace('\\', "/"), "<TEMPDIR>");
+        normalized = normalized.replace(&normalized_display_path(&canonical), "<TEMPDIR>");
+        normalized = normalized.replace(&normalized_display_path(dir), "<TEMPDIR>");
     }
     normalized = normalized.replace(date, "<DATE>");
 

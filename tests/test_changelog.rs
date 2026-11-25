@@ -19,3 +19,14 @@ macro_rules! assert_changelog_snapshot {
 }
 
 mod changelog_tests;
+
+#[cfg(windows)]
+#[test]
+fn normalize_output_replaces_verbatim_and_portable_temp_paths()
+-> Result<(), Box<dyn std::error::Error>> {
+    let root = std::path::Path::new(r"\\?\C:\workspace\govctl");
+    for output in [r"\\?\C:\workspace\govctl", "C:/workspace/govctl"] {
+        assert_eq!(normalize_output(output, root, "2026-11-25")?, "<TEMPDIR>");
+    }
+    Ok(())
+}
