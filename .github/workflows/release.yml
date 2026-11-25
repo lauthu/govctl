@@ -132,6 +132,8 @@ jobs:
 
       - name: Build
         shell: bash
+        env:
+          RUSTFLAGS: ${{ matrix.target == 'aarch64-pc-windows-gnullvm' && '-C link-arg=-lunwind' || '' }}
         run: cargo zigbuild --release --locked --target "${{ matrix.target }}"
 
       - name: Install ZIP packaging tool
