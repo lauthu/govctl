@@ -27,9 +27,10 @@ pub fn stdout_supports_color() -> bool {
 
 /// Format a file path (cyan)
 pub fn path_str(p: &Path) -> String {
+    let path = crate::path_display::normalize(p);
     if use_colors() {
-        format!("{}", p.display().cyan())
+        format!("{}", path.cyan())
     } else {
-        format!("{}", p.display())
+        path
     }
 }

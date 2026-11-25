@@ -246,7 +246,7 @@ fn activate(config: &Config, storage: &workspace::SharedStorage) -> Result<Opene
     loop {
         match lock.try_lock_exclusive() {
             Ok(()) => break,
-            Err(err) if err.kind() == io::ErrorKind::WouldBlock => {
+            Err(err) if crate::lock::is_lock_contention(&err) => {
                 if Instant::now() >= deadline {
                     return Err("timed out waiting for the registry allocation lock".to_string());
                 }

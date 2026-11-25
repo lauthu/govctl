@@ -117,12 +117,10 @@ fn write_claim(
 ) -> Result<(), Box<dyn std::error::Error>> {
     let claims = registry_dir(main)?.join("claims");
     std::fs::create_dir_all(&claims)?;
+    let workspace = toml::Value::String(workspace.display().to_string());
     std::fs::write(
         claims.join(format!("{id}.toml")),
-        format!(
-            "id = \"{id}\"\nworkspace = \"{}\"\nlast_activity = {last_activity}\n",
-            workspace.display()
-        ),
+        format!("id = \"{id}\"\nworkspace = {workspace}\nlast_activity = {last_activity}\n"),
     )?;
     Ok(())
 }
@@ -293,14 +291,17 @@ fn expired_claim_does_not_block() -> TestResult {
         now_secs() - 30 * 24 * 60 * 60,
     )?;
 
-    run_govctl(main.path(), &["rfc", "finalize", "RFC-0001", "normative"])?;
+    let finalized = run_govctl(main.path(), &["rfc", "finalize", "RFC-0001", "normative"])?;
 
     // The expired claim was re-acquired by the finalizing workspace.
     let claim = read_claim(main.path(), "RFC-0001")?;
-    let main_root = std::fs::canonicalize(main.path())?;
-    assert!(
-        claim.contains(&main_root.display().to_string()),
-        "expected the claim to be re-acquired by main: {claim}"
+    let main_root = common::normalized_display_path(&std::fs::canonicalize(main.path())?);
+    let claim_workspace = common::normalized_toml_path(&claim, "workspace")?;
+    assert_eq!(
+        claim_workspace,
+        main_root,
+        "expected the claim to be re-acquired by main: {claim}; finalize stderr: {}",
+        stderr(&finalized)
     );
     Ok(())
 }
@@ -367,8 +368,9 @@ fn steal_transfers_claim_and_records_audit_event() -> TestResult {
     // The claim now belongs to the secondary workspace.
     let claim = read_claim(main.path(), "RFC-0001")?;
     let secondary_root = std::fs::canonicalize(&secondary)?;
-    assert!(
-        claim.contains(&secondary_root.display().to_string()),
+    assert_eq!(
+        common::normalized_toml_path(&claim, "workspace")?,
+        common::normalized_display_path(&secondary_root),
         "claim must name the new owner: {claim}"
     );
 
@@ -382,9 +384,14 @@ fn steal_transfers_claim_and_records_audit_event() -> TestResult {
     let event = std::fs::read_to_string(&events[0])?;
     let main_root = std::fs::canonicalize(main.path())?;
     assert!(event.contains("takeover"), "{event}");
-    assert!(event.contains(&main_root.display().to_string()), "{event}");
-    assert!(
-        event.contains(&secondary_root.display().to_string()),
+    assert_eq!(
+        common::normalized_toml_path(&event, "from_workspace")?,
+        common::normalized_display_path(&main_root),
+        "{event}"
+    );
+    assert_eq!(
+        common::normalized_toml_path(&event, "to_workspace")?,
+        common::normalized_display_path(&secondary_root),
         "{event}"
     );
 
@@ -424,8 +431,9 @@ fn failed_steal_leaves_no_orphan_audit_event() -> TestResult {
     );
     let claim = read_claim(main.path(), "RFC-0001")?;
     let main_root = std::fs::canonicalize(main.path())?;
-    assert!(
-        claim.contains(&main_root.display().to_string()),
+    assert_eq!(
+        common::normalized_toml_path(&claim, "workspace")?,
+        common::normalized_display_path(&main_root),
         "the failed steal must not transfer the claim: {claim}"
     );
     let audit_dir = registry_dir(main.path())?.join("audit");
@@ -488,8 +496,9 @@ fn failed_supersede_releases_claim_acquired_by_the_invocation() -> TestResult {
     );
     let replacement = std::fs::read_to_string(claims.join("RFC-0002.toml"))?;
     let secondary_root = std::fs::canonicalize(&secondary)?;
-    assert!(
-        replacement.contains(&secondary_root.display().to_string()),
+    assert_eq!(
+        common::normalized_toml_path(&replacement, "workspace")?,
+        common::normalized_display_path(&secondary_root),
         "the other workspace's claim must be untouched: {replacement}"
     );
     let rfc_toml = std::fs::read_to_string(main.path().join("gov/rfc/RFC-0001/rfc.toml"))?;

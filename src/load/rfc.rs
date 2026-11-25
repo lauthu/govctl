@@ -16,14 +16,14 @@ pub fn load_rfcs(config: &Config) -> Result<Vec<RfcIndex>, LoadError> {
 
     let mut rfcs = Vec::new();
     let entries = std::fs::read_dir(&rfcs_dir).map_err(|e| LoadError::Io {
-        file: rfcs_dir.display().to_string(),
+        file: crate::path_display::normalize(&rfcs_dir),
         action: "read RFC directory",
         message: e.to_string(),
     })?;
 
     for entry in entries {
         let entry = entry.map_err(|e| LoadError::Io {
-            file: rfcs_dir.display().to_string(),
+            file: crate::path_display::normalize(&rfcs_dir),
             action: "read RFC directory entry",
             message: e.to_string(),
         })?;
@@ -54,7 +54,7 @@ pub fn load_rfc(config: &Config, rfc_path: &Path) -> Result<RfcIndex, LoadError>
     }
 
     let rfc_dir = rfc_path.parent().ok_or_else(|| LoadError::InternalIo {
-        file: rfc_path.display().to_string(),
+        file: crate::path_display::normalize(rfc_path),
         message: "RFC path has no parent directory".to_string(),
     })?;
     let resolved_rfc_dir = canonicalize_path(rfc_dir, "resolve RFC directory")?;
@@ -121,7 +121,7 @@ fn resolve_clause_reference(
             invalid_clause_path(rfc_path, reference)
         } else {
             LoadError::Io {
-                file: path.display().to_string(),
+                file: crate::path_display::normalize(&path),
                 action: "resolve clause path",
                 message: err.to_string(),
             }
@@ -135,14 +135,14 @@ fn resolve_clause_reference(
 
 fn invalid_clause_path(rfc_path: &Path, reference: &str) -> LoadError {
     LoadError::ClausePathInvalid {
-        file: rfc_path.display().to_string(),
+        file: crate::path_display::normalize(rfc_path),
         clause: reference.to_string(),
     }
 }
 
 fn canonicalize_path(path: &Path, action: &'static str) -> Result<PathBuf, LoadError> {
     std::fs::canonicalize(path).map_err(|err| LoadError::Io {
-        file: path.display().to_string(),
+        file: crate::path_display::normalize(path),
         action,
         message: err.to_string(),
     })
@@ -166,28 +166,33 @@ fn canonicalize_contained(
 pub(crate) fn validate_clause_storage_path(config: &Config, path: &Path) -> Result<(), LoadError> {
     let relative = path
         .strip_prefix(config.rfc_dir())
-        .map_err(|_| invalid_clause_path(path, &path.display().to_string()))?;
+        .map_err(|_| invalid_clause_path(path, &crate::path_display::normalize(path)))?;
     let rfc_component = relative
         .components()
         .next()
         .filter(|component| matches!(component, std::path::Component::Normal(_)))
-        .ok_or_else(|| invalid_clause_path(path, &path.display().to_string()))?;
+        .ok_or_else(|| invalid_clause_path(path, &crate::path_display::normalize(path)))?;
     let rfc_dir = config.rfc_dir().join(rfc_component.as_os_str());
     let resolved_rfc_dir = canonicalize_path(&rfc_dir, "resolve RFC directory")?;
     let resolved_target = match std::fs::canonicalize(path) {
         Ok(resolved) => resolved,
         Err(err) if err.kind() == std::io::ErrorKind::NotFound => {
             match std::fs::symlink_metadata(path) {
-                Ok(_) => return Err(invalid_clause_path(path, &path.display().to_string())),
+                Ok(_) => {
+                    return Err(invalid_clause_path(
+                        path,
+                        &crate::path_display::normalize(path),
+                    ));
+                }
                 Err(metadata_err) if metadata_err.kind() == std::io::ErrorKind::NotFound => {
-                    let parent = path
-                        .parent()
-                        .ok_or_else(|| invalid_clause_path(path, &path.display().to_string()))?;
+                    let parent = path.parent().ok_or_else(|| {
+                        invalid_clause_path(path, &crate::path_display::normalize(path))
+                    })?;
                     canonicalize_path(parent, "resolve Clause storage path")?
                 }
                 Err(metadata_err) => {
                     return Err(LoadError::Io {
-                        file: path.display().to_string(),
+                        file: crate::path_display::normalize(path),
                         action: "read Clause storage metadata",
                         message: metadata_err.to_string(),
                     });
@@ -196,14 +201,17 @@ pub(crate) fn validate_clause_storage_path(config: &Config, path: &Path) -> Resu
         }
         Err(err) => {
             return Err(LoadError::Io {
-                file: path.display().to_string(),
+                file: crate::path_display::normalize(path),
                 action: "resolve Clause storage path",
                 message: err.to_string(),
             });
         }
     };
     if !resolved_target.starts_with(&resolved_rfc_dir) {
-        return Err(invalid_clause_path(path, &path.display().to_string()));
+        return Err(invalid_clause_path(
+            path,
+            &crate::path_display::normalize(path),
+        ));
     }
     Ok(())
 }
@@ -221,19 +229,19 @@ fn clause_directory_paths(
         &clauses_dir,
         resolved_rfc_dir,
         rfc_path,
-        &clauses_dir.display().to_string(),
+        &crate::path_display::normalize(&clauses_dir),
         "resolve clause directory",
     )?;
 
     let entries = std::fs::read_dir(&clauses_dir).map_err(|err| LoadError::Io {
-        file: clauses_dir.display().to_string(),
+        file: crate::path_display::normalize(&clauses_dir),
         action: "read clause directory",
         message: err.to_string(),
     })?;
     let mut paths = Vec::new();
     for entry in entries {
         let entry = entry.map_err(|err| LoadError::Io {
-            file: clauses_dir.display().to_string(),
+            file: crate::path_display::normalize(&clauses_dir),
             action: "read clause directory entry",
             message: err.to_string(),
         })?;
@@ -243,7 +251,7 @@ fn clause_directory_paths(
                 &path,
                 resolved_rfc_dir,
                 rfc_path,
-                &path.display().to_string(),
+                &crate::path_display::normalize(&path),
                 "resolve clause path",
             )?;
             paths.push(path);
@@ -372,7 +380,7 @@ fn legacy_json_diagnostic(config: &Config, path: &Path) -> Diagnostic {
 
 fn read_source_file(path: &Path, action: &'static str) -> Result<String, LoadError> {
     std::fs::read_to_string(path).map_err(|e| LoadError::Io {
-        file: path.display().to_string(),
+        file: crate::path_display::normalize(path),
         action,
         message: e.to_string(),
     })
@@ -398,7 +406,7 @@ where
         Some("toml") => load_toml_wire(config, path, &content, spec),
         Some("json") => Err(LoadError::Diagnostic(legacy_json_diagnostic(config, path))),
         _ => Err((spec.schema_error)(
-            path.display().to_string(),
+            crate::path_display::normalize(path),
             "Unsupported artifact source extension; expected TOML".to_string(),
         )),
     }
@@ -414,11 +422,11 @@ where
     Wire: DeserializeOwned,
 {
     let raw: toml::Value = toml::from_str(content)
-        .map_err(|e| (spec.decode_error)(path.display().to_string(), e.to_string()))?;
+        .map_err(|e| (spec.decode_error)(crate::path_display::normalize(path), e.to_string()))?;
     validate_toml_value(spec.schema, config, path, &raw)
-        .map_err(|e| (spec.schema_error)(path.display().to_string(), e.message))?;
+        .map_err(|e| (spec.schema_error)(crate::path_display::normalize(path), e.message))?;
     raw.try_into()
-        .map_err(|e| (spec.decode_error)(path.display().to_string(), e.to_string()))
+        .map_err(|e| (spec.decode_error)(crate::path_display::normalize(path), e.to_string()))
 }
 
 fn rfc_schema_error(file: String, message: String) -> LoadError {

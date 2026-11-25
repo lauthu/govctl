@@ -33,11 +33,7 @@ pub fn rendered(path: &Path) {
 }
 
 pub fn not_found(kind: &str, location: &Path) {
-    if use_colors() {
-        eprintln!("No {}s found in {}", kind, location.display().cyan());
-    } else {
-        eprintln!("No {}s found in {}", kind, location.display());
-    }
+    eprintln!("No {}s found in {}", kind, path_str(location));
 }
 
 pub fn check_header() {

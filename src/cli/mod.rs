@@ -24,6 +24,7 @@ use std::path::PathBuf;
 
 #[derive(Parser)]
 #[command(name = "govctl")]
+#[command(bin_name = "govctl")]
 #[command(about = "Project governance CLI for RFC, ADR, and Work Item management")]
 #[command(version)]
 pub(crate) struct Cli {

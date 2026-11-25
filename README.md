@@ -117,6 +117,53 @@ govctl init
 govctl status
 ```
 
+#### Windows
+
+For a prebuilt installation on Windows, install Rust with
+[rustup](https://rustup.rs/) if needed, then run these commands in PowerShell.
+The first command is only needed when `cargo-binstall` is not already installed:
+
+```powershell
+cargo install cargo-binstall
+cargo binstall govctl
+govctl --version
+```
+
+Prebuilt packages contain `govctl.exe` and do not require Visual Studio, MSVC
+build tools, or MinGW. `cargo-binstall` selects the matching Windows package,
+including when the installed Rust toolchain uses an MSVC target.
+
+To install manually, download the ZIP archive for your architecture from
+[GitHub Releases](https://github.com/govctl-org/govctl/releases):
+
+| Architecture              | Release archive                                    |
+| ------------------------- | -------------------------------------------------- |
+| 64-bit x86 (Intel or AMD) | `govctl-v<version>-x86_64-pc-windows-gnu.zip`      |
+| ARM64                     | `govctl-v<version>-aarch64-pc-windows-gnullvm.zip` |
+
+Extract the archive and add the directory containing `govctl.exe` to your user
+`PATH` through Windows environment-variable settings. Open a new terminal and
+run `govctl --version` to confirm the installation. During the pre-1.0
+transition, releases may also provide MSVC-named compatibility aliases; use the
+canonical GNU or gnullvm archives above for manual installations.
+
+To build from source instead, install Rust and a C/C++ toolchain supported by
+your Rust target, then run `cargo install govctl`. For the default MSVC
+toolchain, install Visual Studio Build Tools with the **Desktop development
+with C++** workload.
+
+Verification Guards have one additional runtime requirement: Bash. Install
+[Git for Windows](https://git-scm.com/download/win) and make sure `bash.exe` is
+available on `PATH`:
+
+```powershell
+where.exe bash
+bash --version
+```
+
+Git Bash is sufficient; WSL is not required. `govctl self-update` uses the same
+platform-specific release assets.
+
 To update an existing installation:
 
 ```bash
@@ -229,7 +276,10 @@ govctl loop run <LOOP-ID>
 
 ### Verification guards
 
-Guards are executable checks that run when work reaches completion gates.
+Guards are executable checks that run when work reaches completion gates. They
+run in a non-login, non-interactive Bash and inherit the invoking process
+environment. Unix uses `/bin/bash`; Windows resolves `bash` from `PATH`, so Git
+for Windows must be installed and `bash.exe` must be available.
 
 Define reusable project defaults in `gov/config.toml`:
 

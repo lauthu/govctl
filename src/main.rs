@@ -18,6 +18,7 @@ mod loop_planner;
 mod loop_state;
 mod model;
 mod parse;
+mod path_display;
 mod reference_pattern;
 mod registry;
 mod render;

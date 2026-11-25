@@ -2,6 +2,8 @@ use crate::config::Config;
 use crate::diagnostic::{Diagnostic, DiagnosticCode};
 use crate::model::GuardEntry;
 use regex::RegexBuilder;
+use std::ffi::{OsStr, OsString};
+use std::path::Path;
 use std::process::{Command, ExitStatus};
 use std::time::{Duration, Instant};
 
@@ -25,6 +27,38 @@ pub struct GuardRunResult {
     pub output: String,
 }
 
+/// Prefer an installed non-WSL Bash so the WSL launcher cannot shadow it.
+fn windows_bash_program(path: Option<&OsStr>) -> OsString {
+    let Some(path) = path else {
+        return OsString::from("bash");
+    };
+    for directory in std::env::split_paths(path) {
+        let candidate = directory.join("bash.exe");
+        if candidate.is_file() && !is_wsl_bash(&candidate) {
+            return candidate.into_os_string();
+        }
+    }
+    OsString::from("bash")
+}
+
+fn is_wsl_bash(path: &Path) -> bool {
+    let path = path.to_string_lossy().to_lowercase().replace('/', "\\");
+    path.contains(r"\windows\system32\bash.exe")
+        || path.contains(r"\windows\syswow64\bash.exe")
+        || path.contains(r"\windowsapps\bash.exe")
+}
+
+fn guard_shell(command_text: &str, windows: bool) -> Command {
+    let program = if windows {
+        windows_bash_program(std::env::var_os("PATH").as_deref())
+    } else {
+        OsString::from("/bin/bash")
+    };
+    let mut command = Command::new(program);
+    command.args(["-c", command_text]);
+    command
+}
+
 pub fn run_guard(config: &Config, guard: &GuardEntry) -> Result<GuardRunResult, Diagnostic> {
     let project_root = config
         .gov_root
@@ -42,9 +76,8 @@ pub fn run_guard(config: &Config, guard: &GuardEntry) -> Result<GuardRunResult, 
 
     // Non-login shell: inherit the caller's environment unchanged instead of
     // re-sourcing profile files [[RFC-0000:C-GUARD-DEF]], [[ADR-0064]].
-    let mut command = Command::new("/bin/bash");
+    let mut command = guard_shell(&guard.spec.check.command, cfg!(windows));
     command
-        .args(["-c", &guard.spec.check.command])
         .current_dir(project_root)
         .stdout(stdout_capture.stdio(guard, "stdout")?)
         .stderr(stderr_capture.stdio(guard, "stderr")?);
@@ -145,4 +178,39 @@ pub fn run_guard(config: &Config, guard: &GuardEntry) -> Result<GuardRunResult, 
         primary_shell_running_at_timeout,
         output: combined_output,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn guard_shell_uses_platform_bash_without_login_arguments() {
+        assert_eq!(guard_shell("printf ok", false).get_program(), "/bin/bash");
+        for windows in [false, true] {
+            let command = guard_shell("printf ok", windows);
+            let arguments = command
+                .get_args()
+                .map(|argument| argument.to_string_lossy().into_owned())
+                .collect::<Vec<_>>();
+            assert_eq!(arguments, ["-c", "printf ok"]);
+        }
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn windows_bash_program_prefers_non_wsl_bash() -> Result<(), Box<dyn std::error::Error>> {
+        let temp = tempfile::tempdir()?;
+        let wsl = temp.path().join("Windows/System32");
+        let git = temp.path().join("Git/bin");
+        std::fs::create_dir_all(&wsl)?;
+        std::fs::create_dir_all(&git)?;
+        std::fs::write(wsl.join("bash.exe"), [])?;
+        let git_bash = git.join("bash.exe");
+        std::fs::write(&git_bash, [])?;
+        let path = std::env::join_paths([wsl, git])?;
+
+        assert_eq!(windows_bash_program(Some(&path)), git_bash);
+        Ok(())
+    }
 }
