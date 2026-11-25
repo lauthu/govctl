@@ -7,7 +7,7 @@ use std::io::IsTerminal;
 use crate::diagnostic::{Diagnostic, DiagnosticCode, DiagnosticResult, Diagnostics};
 use crate::ui;
 
-const REPO_OWNER: &str = "govctl-org";
+const REPO_OWNER: &str = "lauthu";
 const REPO_NAME: &str = "govctl";
 const BIN_NAME: &str = "govctl";
 const SELF_UPDATE_BIN_PATH_IN_ARCHIVE: &str = "govctl-v{{ version }}-{{ target }}/{{ bin }}";
@@ -74,13 +74,10 @@ fn check_version(current: &str) -> DiagnosticResult<Diagnostics> {
         .fetch()
         .map_err(|err| self_update_error("fetch GitHub releases", err))?;
 
-    let latest = releases.first().ok_or_else(|| {
-        Diagnostic::new(
-            DiagnosticCode::E0901IoError,
-            "no releases found on GitHub",
-            "",
-        )
-    })?;
+    let Some(latest) = releases.first() else {
+        ui::success(format!("govctl v{current} is up to date"));
+        return Ok(vec![]);
+    };
 
     match compare_versions(current, &latest.version)? {
         VersionCheck::UpToDate => {

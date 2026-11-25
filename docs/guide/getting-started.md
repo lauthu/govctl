@@ -8,18 +8,25 @@ This guide walks you through installing govctl and creating your first governed 
 
 ## Installation
 
+Prebuilt binaries for this fork are available from
+[lauthu/govctl Releases](https://github.com/lauthu/govctl/releases). Download
+the archive for your platform and add the extracted directory to your `PATH`.
+
 ```bash
-# From crates.io (includes TUI by default)
-cargo install govctl
+# Install this fork from a checked-out source tree
+cargo install --path .
 
 # Without TUI
-cargo install govctl --no-default-features
+cargo install --path . --no-default-features
 
-# Or build from source
-git clone https://github.com/govctl-org/govctl
+# Or build this fork from source
+git clone https://github.com/lauthu/govctl
 cd govctl
 cargo build --release
 # Binary at ./target/release/govctl
+
+# To install the upstream crate from crates.io instead:
+# cargo install govctl
 ```
 
 ### Features

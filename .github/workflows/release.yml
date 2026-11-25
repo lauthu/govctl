@@ -369,7 +369,7 @@ jobs:
         with:
           name: ${{ env.VERSION }}
           draft: false
-          prerelease: ${{ contains(github.ref, '-alpha') || contains(github.ref, '-beta') || contains(github.ref, '-rc') }}
+          prerelease: ${{ contains(github.ref, '-alpha') || contains(github.ref, '-beta') || contains(github.ref, '-rc') || contains(github.ref, '-lauthu') }}
           generate_release_notes: false
           body_path: artifacts/release-notes.md
           files: artifacts/*

@@ -106,11 +106,34 @@ For existing repositories, the `/migrate` workflow helps you adopt governance in
 
 ### CLI
 
+For this fork's prebuilt binaries, download the archive for your platform from
+[lauthu/govctl Releases](https://github.com/lauthu/govctl/releases):
+
+| Platform | Architecture              | Release archive                                       |
+| -------- | ------------------------- | ----------------------------------------------------- |
+| Linux    | 64-bit x86 (Intel or AMD) | `govctl-v<version>-x86_64-unknown-linux-musl.tar.gz`  |
+| Linux    | ARM64                     | `govctl-v<version>-aarch64-unknown-linux-musl.tar.gz` |
+| macOS    | Intel                     | `govctl-v<version>-x86_64-apple-darwin.tar.gz`        |
+| macOS    | Apple Silicon             | `govctl-v<version>-aarch64-apple-darwin.tar.gz`       |
+| Windows  | 64-bit x86 (Intel or AMD) | `govctl-v<version>-x86_64-pc-windows-gnu.zip`         |
+| Windows  | ARM64                     | `govctl-v<version>-aarch64-pc-windows-gnullvm.zip`    |
+
+Extract the archive and add the directory containing `govctl` or `govctl.exe` to
+your `PATH`, then run `govctl --version`. During the pre-1.0 transition, releases
+may also provide GNU- or MSVC-named compatibility aliases; use the canonical
+archives above for manual installations.
+
+To install this fork from a checked-out source tree, or to install the upstream
+project with Cargo:
+
 ```bash
-# Install from source
+# Install this fork from a checked-out source tree
+cargo install --path .
+
+# Or install the upstream crate from crates.io
 cargo install govctl
 
-# Or install a prebuilt binary (faster, skips compilation)
+# Or install upstream's prebuilt binary
 cargo binstall govctl
 
 govctl init
@@ -119,38 +142,18 @@ govctl status
 
 #### Windows
 
-For a prebuilt installation on Windows, install Rust with
-[rustup](https://rustup.rs/) if needed, then run these commands in PowerShell.
-The first command is only needed when `cargo-binstall` is not already installed:
+Prebuilt Windows packages contain `govctl.exe` and do not require Visual Studio,
+MSVC build tools, or MinGW. Choose the Windows archive for your architecture in
+the table above and add the extracted directory to your user `PATH` through
+Windows environment-variable settings. Open a new terminal and run
+`govctl --version` to confirm the installation. The `cargo-binstall` command
+above installs the upstream package, not this fork.
 
-```powershell
-cargo install cargo-binstall
-cargo binstall govctl
-govctl --version
-```
-
-Prebuilt packages contain `govctl.exe` and do not require Visual Studio, MSVC
-build tools, or MinGW. `cargo-binstall` selects the matching Windows package,
-including when the installed Rust toolchain uses an MSVC target.
-
-To install manually, download the ZIP archive for your architecture from
-[GitHub Releases](https://github.com/govctl-org/govctl/releases):
-
-| Architecture              | Release archive                                    |
-| ------------------------- | -------------------------------------------------- |
-| 64-bit x86 (Intel or AMD) | `govctl-v<version>-x86_64-pc-windows-gnu.zip`      |
-| ARM64                     | `govctl-v<version>-aarch64-pc-windows-gnullvm.zip` |
-
-Extract the archive and add the directory containing `govctl.exe` to your user
-`PATH` through Windows environment-variable settings. Open a new terminal and
-run `govctl --version` to confirm the installation. During the pre-1.0
-transition, releases may also provide MSVC-named compatibility aliases; use the
-canonical GNU or gnullvm archives above for manual installations.
-
-To build from source instead, install Rust and a C/C++ toolchain supported by
-your Rust target, then run `cargo install govctl`. For the default MSVC
-toolchain, install Visual Studio Build Tools with the **Desktop development
-with C++** workload.
+To build this fork from source, install Rust with
+[rustup](https://rustup.rs/) and a C/C++ toolchain supported by your Rust
+target, then run `cargo install --path .`. For the default MSVC toolchain,
+install Visual Studio Build Tools with the **Desktop development with C++**
+workload.
 
 Verification Guards have one additional runtime requirement: Bash. Install
 [Git for Windows](https://git-scm.com/download/win) and make sure `bash.exe` is
@@ -161,8 +164,8 @@ where.exe bash
 bash --version
 ```
 
-Git Bash is sufficient; WSL is not required. `govctl self-update` uses the same
-platform-specific release assets.
+Git Bash is sufficient; WSL is not required. `govctl self-update` uses this
+fork's platform-specific release assets.
 
 To update an existing installation:
 

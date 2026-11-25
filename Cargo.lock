@@ -1222,7 +1222,7 @@ dependencies = [
 
 [[package]]
 name = "govctl"
-version = "0.22.0"
+version = "0.23.0-lauthu.1"
 dependencies = [
  "agent-plugin-installer",
  "ansi-to-tui",

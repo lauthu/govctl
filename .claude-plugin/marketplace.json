@@ -3,20 +3,20 @@
   "name": "govctl",
   "description": "Governance framework for software projects — RFCs, ADRs, work items with lifecycle enforcement",
   "owner": {
-    "name": "govctl-org",
+    "name": "lauthu",
     "email": "govctl@users.noreply.github.com"
   },
   "plugins": [
     {
       "name": "govctl",
       "description": "Governed workflow skills, reviewer agents, and enforcement hooks for govctl",
-      "version": "0.22.0",
+      "version": "0.23.0-lauthu.1",
       "source": "./.claude",
       "author": {
-        "name": "govctl-org"
+        "name": "lauthu"
       },
-      "homepage": "https://github.com/govctl-org/govctl",
-      "repository": "https://github.com/govctl-org/govctl",
+      "homepage": "https://github.com/lauthu/govctl",
+      "repository": "https://github.com/lauthu/govctl",
       "license": "MIT",
       "category": "productivity",
       "tags": [
